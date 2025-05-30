@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAILS Management System - Financial Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-charcoal: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #404040;
+            --background-grey: #f5f5f5;
+            --pure-white: #ffffff;
+            --professional-blue: #0066cc;
+            --success-green: #28a745;
+            --error-red: #dc3545;
+            --warning-amber: #ffc107;
+            --border-color: #e0e0e0;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-hover: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background-grey);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--pure-white);
+            border-right: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .sidebar-nav {
+            padding: 16px 0;
+        }
+
+        .nav-group {
+            margin-bottom: 24px;
+        }
+
+        .nav-group-title {
+            padding: 8px 24px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 12px 24px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #f8f9fa;
+            border-left-color: var(--professional-blue);
+        }
+
+        .nav-item.active {
+            background: #e3f2fd;
+            border-left-color: var(--professional-blue);
+            color: var(--professional-blue);
+        }
+
+        .nav-item i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 24px;
+        }
+
+        /* Header */
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            background: var(--pure-white);
+            padding: 20px 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .header-title h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--pure-white);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--professional-blue);
+            color: white;
+            border-color: var(--professional-blue);
+        }
+
+        .btn-success {
+            background: var(--success-green);
+            color: white;
+            border-color: var(--success-green);
+        }
+
+        .btn-danger {
+            background: var(--error-red);
+            color: white;
+            border-color: var(--error-red);
+        }
+
+        .btn-warning {
+            background: var(--warning-amber);
+            color: white;
+            border-color: var(--warning-amber);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--pure-white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Tabs */
+        .tabs-container {
+            margin-bottom: 24px;
+        }
+
+        .tabs-nav {
+            display: flex;
+            background: var(--pure-white);
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: var(--shadow);
+            gap: 4px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .tab-button.active {
+            background: var(--professional-blue);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Financial Stats */
+        .financial-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .financial-card {
+            background: var(--pure-white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .financial-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--professional-blue);
+        }
+
+        .financial-card.positive::before {
+            background: var(--success-green);
+        }
+
+        .financial-card.negative::before {
+            background: var(--error-red);
+        }
+
+        .financial-card.warning::before {
+            background: var(--warning-amber);
+        }
+
+        .financial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .financial-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .financial-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .financial-amount {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .financial-change {
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .financial-change.positive {
+            color: var(--success-green);
+        }
+
+        .financial-change.negative {
+            color: var(--error-red);
+        }
+
+        /* Budget vs Actual */
+        .budget-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .budget-item {
+            background: var(--pure-white);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .budget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .budget-category {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .budget-percentage {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .budget-amounts {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .amount-item {
+            text-align: center;
+        }
+
+        .amount-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .amount-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--professional-blue);
+            transition: width 0.3s ease;
+        }
+
+        .progress-bar.success {
+            background: var(--success-green);
+        }
+
+        .progress-bar.warning {
+            background: var(--warning-amber);
+        }
+
+        .progress-bar.danger {
+            background: var(--error-red);
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            background: var(--pure-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Status Badges */
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .badge-secondary {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .badge-primary {
+            background: #b3d9ff;
+            color: #0056b3;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 5vh;
+        }
+
+        .modal-content {
+            background: var(--pure-white);
+            border-radius: 12px;
+            padding: 24px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: var(--shadow-hover);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 0;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--professional-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Charts Placeholder */
+        .chart-container {
+            height: 300px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin: 16px 0;
+        }
+
+        /* Filters */
+        .financial-filters {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: var(--pure-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-control {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        .search-input {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 250px;
+        }
+
+        /* Cash Flow */
+        .cash-flow-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cash-flow-item:last-child {
+            border-bottom: none;
+        }
+
+        .cash-flow-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .cash-flow-description {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .cash-flow-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .cash-flow-amount {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .cash-flow-amount.positive {
+            color: var(--success-green);
+        }
+
+        .cash-flow-amount.negative {
+            color: var(--error-red);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .financial-overview {
+                grid-template-columns: 1fr;
+            }
+
+            .budget-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .financial-filters {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs-nav {
+                flex-direction: column;
+                gap: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>SAILS</h1>
+                <p>Management System</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-group">
+                    <div class="nav-group-title">Main</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Project Management</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('activities')">
+                        <i class="fas fa-tasks"></i>
+                        Activities
+                    </a>
+                    <a href="#" class="nav-item" onclick="navigateTo('deliverables')">
+                        <i class="fas fa-check-circle"></i>
+                        Deliverables
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Procurement & Contracts</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('procurements')">
+                        <i class="fas fa-shopping-cart"></i>
+                        Procurements
+                    </a>
+                    <a href="#" class="nav-item" onclick="navigateTo('contracts')">
+                        <i class="fas fa-file-contract"></i>
+                        Contracts
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Resources</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('assets')">
+                        <i class="fas fa-cubes"></i>
+                        Assets
+                    </a>
+                    <a href="#" class="nav-item active">
+                        <i class="fas fa-dollar-sign"></i>
+                        Finances
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Analytics</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('reports')">
+                        <i class="fas fa-chart-bar"></i>
+                        Reports
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">System</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('settings')">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="main-header">
+                <div class="header-title">
+                    <h2>Financial Management</h2>
+                    <div class="header-subtitle">Budget tracking, payments, and financial reporting</div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="openTransactionModal()">
+                        <i class="fas fa-plus"></i>
+                        New Transaction
+                    </button>
+                    <button class="btn" onclick="exportFinancials()">
+                        <i class="fas fa-download"></i>
+                        Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- Financial Overview -->
+            <div class="financial-overview">
+                <div class="financial-card positive">
+                    <div class="financial-header">
+                        <div class="financial-title">Total Budget</div>
+                        <div class="financial-icon" style="background: var(--professional-blue);">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                    </div>
+                    <div class="financial-amount" id="totalBudget">$18.2M</div>
+                    <div class="financial-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        Approved budget for 2025
+                    </div>
+                </div>
+
+                <div class="financial-card">
+                    <div class="financial-header">
+                        <div class="financial-title">Utilized Budget</div>
+                        <div class="financial-icon" style="background: var(--success-green);">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="financial-amount" id="utilizedBudget">$12.4M</div>
+                    <div class="financial-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        68% of total budget
+                    </div>
+                </div>
+
+                <div class="financial-card warning">
+                    <div class="financial-header">
+                        <div class="financial-title">Remaining Budget</div>
+                        <div class="financial-icon" style="background: var(--warning-amber);">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                    </div>
+                    <div class="financial-amount" id="remainingBudget">$5.8M</div>
+                    <div class="financial-change">
+                        <i class="fas fa-clock"></i>
+                        32% remaining
+                    </div>
+                </div>
+
+                <div class="financial-card negative">
+                    <div class="financial-header">
+                        <div class="financial-title">Pending Payments</div>
+                        <div class="financial-icon" style="background: var(--error-red);">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                    </div>
+                    <div class="financial-amount" id="pendingPayments">$485K</div>
+                    <div class="financial-change negative">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        12 pending invoices
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs Container -->
+            <div class="tabs-container">
+                <div class="tabs-nav">
+                    <button class="tab-button active" onclick="switchTab('budget')">
+                        <i class="fas fa-chart-pie"></i>
+                        Budget Management
+                    </button>
+                    <button class="tab-button" onclick="switchTab('transactions')">
+                        <i class="fas fa-exchange-alt"></i>
+                        Transactions
+                    </button>
+                    <button class="tab-button" onclick="switchTab('invoices')">
+                        <i class="fas fa-file-invoice"></i>
+                        Invoices
+                    </button>
+                    <button class="tab-button" onclick="switchTab('cashflow')">
+                        <i class="fas fa-water"></i>
+                        Cash Flow
+                    </button>
+                    <button class="tab-button" onclick="switchTab('reports')">
+                        <i class="fas fa-chart-bar"></i>
+                        Reports
+                    </button>
+                </div>
+
+                <!-- Budget Management Tab -->
+                <div class="tab-content active" id="budget-tab">
+                    <!-- Budget vs Actual Comparison -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Budget vs Actual by Component</h3>
+                            <select class="filter-control" id="budgetYearFilter">
+                                <option value="2025">2025</option>
+                                <option value="2024">2024</option>
+                            </select>
+                        </div>
+                        
+                        <div class="budget-comparison" id="budgetComparison">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Budget Allocation Chart -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Budget Allocation</h3>
+                        </div>
+                        <div class="chart-container">
+                            <div style="text-align: center;">
+                                <i class="fas fa-chart-pie" style="font-size: 48px; margin-bottom: 16px;"></i>
+                                <p>Budget allocation chart would be displayed here</p>
+                                <p>(Integration with Chart.js or similar library)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transactions Tab -->
+                <div class="tab-content" id="transactions-tab">
+                    <!-- Transaction Filters -->
+                    <div class="financial-filters">
+                        <div class="filter-group">
+                            <label class="filter-label">Search</label>
+                            <input type="text" class="search-input" placeholder="Search transactions..." id="transactionSearch" oninput="filterTransactions()">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Type</label>
+                            <select class="filter-control" id="transactionTypeFilter" onchange="filterTransactions()">
+                                <option value="">All Types</option>
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                                <option value="transfer">Transfer</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Category</label>
+                            <select class="filter-control" id="transactionCategoryFilter" onchange="filterTransactions()">
+                                <option value="">All Categories</option>
+                                <option value="personnel">Personnel</option>
+                                <option value="equipment">Equipment</option>
+                                <option value="training">Training</option>
+                                <option value="consultancy">Consultancy</option>
+                                <option value="operational">Operational</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Status</label>
+                            <select class="filter-control" id="transactionStatusFilter" onchange="filterTransactions()">
+                                <option value="">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="paid">Paid</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Transactions Table -->
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Transaction #</th>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Invoices Tab -->
+                <div class="tab-content" id="invoices-tab">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Invoice #</th>
+                                    <th>Vendor</th>
+                                    <th>Contract</th>
+                                    <th>Amount</th>
+                                    <th>Issue Date</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoicesTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Cash Flow Tab -->
+                <div class="tab-content" id="cashflow-tab">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                        <!-- Cash Flow Forecast -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Cash Flow Forecast</h3>
+                                <select class="filter-control" id="cashflowPeriodFilter" onchange="updateCashFlow()">
+                                    <option value="month">Next Month</option>
+                                    <option value="quarter">Next Quarter</option>
+                                    <option value="year">Next Year</option>
+                                </select>
+                            </div>
+                            <div class="chart-container">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-chart-line" style="font-size: 48px; margin-bottom: 16px;"></i>
+                                    <p>Cash flow chart would be displayed here</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Cash Flow -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Upcoming Cash Flow</h3>
+                            </div>
+                            <div id="upcomingCashFlow">
+                                <!-- Populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div class="tab-content" id="reports-tab">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+                        <!-- Financial Reports -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Standard Reports</h3>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <button class="btn" onclick="generateReport('financial_summary')">
+                                    <i class="fas fa-file-alt"></i>
+                                    Financial Summary Report
+                                </button>
+                                <button class="btn" onclick="generateReport('budget_variance')">
+                                    <i class="fas fa-chart-bar"></i>
+                                    Budget Variance Report
+                                </button>
+                                <button class="btn" onclick="generateReport('cash_flow')">
+                                    <i class="fas fa-water"></i>
+                                    Cash Flow Statement
+                                </button>
+                                <button class="btn" onclick="generateReport('expense_analysis')">
+                                    <i class="fas fa-pie-chart"></i>
+                                    Expense Analysis Report
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Report Filters -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Report Parameters</h3>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Report Period</label>
+                                <select class="form-control" id="reportPeriod">
+                                    <option value="current_month">Current Month</option>
+                                    <option value="current_quarter">Current Quarter</option>
+                                    <option value="current_year">Current Year</option>
+                                    <option value="custom">Custom Range</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Currency</label>
+                                <select class="form-control" id="reportCurrency">
+                                    <option value="USD">USD - US Dollar</option>
+                                    <option value="MVR">MVR - Maldivian Rufiyaa</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Format</label>
+                                <select class="form-control" id="reportFormat">
+                                    <option value="pdf">PDF</option>
+                                    <option value="excel">Excel</option>
+                                    <option value="csv">CSV</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Transaction Modal -->
+    <div class="modal" id="transactionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="transactionModalTitle">New Transaction</h3>
+                <button class="modal-close" onclick="closeTransactionModal()">&times;</button>
+            </div>
+            
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label class="form-label">Transaction Number</label>
+                    <input type="text" class="form-control" id="transactionNumber" placeholder="AUTO-GENERATED" readonly>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Transaction Type</label>
+                        <select class="form-control" id="transactionType" required onchange="updateTransactionFields()">
+                            <option value="">Select Type</option>
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                            <option value="transfer">Transfer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-control" id="transactionCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="personnel">Personnel</option>
+                            <option value="equipment">Equipment</option>
+                            <option value="training">Training</option>
+                            <option value="consultancy">Consultancy</option>
+                            <option value="operational">Operational</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" id="transactionDescription" rows="2" placeholder="Transaction description" required></textarea>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Amount</label>
+                        <input type="number" class="form-control" id="transactionAmount" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Currency</label>
+                        <select class="form-control" id="transactionCurrency">
+                            <option value="USD">USD - US Dollar</option>
+                            <option value="MVR">MVR - Maldivian Rufiyaa</option>
+                            <option value="EUR">EUR - Euro</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Transaction Date</label>
+                        <input type="date" class="form-control" id="transactionDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Reference</label>
+                        <input type="text" class="form-control" id="transactionReference" placeholder="Reference number or code">
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Related Contract</label>
+                        <select class="form-control" id="relatedContract">
+                            <option value="">Select Contract (Optional)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Payment Method</label>
+                        <select class="form-control" id="paymentMethod">
+                            <option value="">Select Method</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="check">Check</option>
+                            <option value="cash">Cash</option>
+                            <option value="credit_card">Credit Card</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn" onclick="closeTransactionModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let transactions = [];
+        let invoices = [];
+        let budgets = [];
+        let currentTab = 'budget';
+        let editingTransaction = null;
+
+        // In-Memory Storage
+        const inMemoryStorage = {};
+
+        // Sample Data
+        const sampleBudgets = [
+            {
+                id: 'budget_001',
+                component: 'Skills Development',
+                category: 'Personnel',
+                budgetAmount: 5000000,
+                revisedAmount: 5200000,
+                committedAmount: 3500000,
+                actualAmount: 3100000,
+                variance: -400000,
+                utilizationRate: 67
+            },
+            {
+                id: 'budget_002',
+                component: 'Skills Development',
+                category: 'Equipment',
+                budgetAmount: 2500000,
+                revisedAmount: 2800000,
+                committedAmount: 2100000,
+                actualAmount: 1950000,
+                variance: -150000,
+                utilizationRate: 78
+            },
+            {
+                id: 'budget_003',
+                component: 'Unemployment Insurance',
+                category: 'Consultancy',
+                budgetAmount: 3000000,
+                revisedAmount: 3000000,
+                committedAmount: 2200000,
+                actualAmount: 2050000,
+                variance: -150000,
+                utilizationRate: 73
+            },
+            {
+                id: 'budget_004',
+                component: 'Social Protection',
+                category: 'Training',
+                budgetAmount: 1800000,
+                revisedAmount: 2000000,
+                committedAmount: 1400000,
+                actualAmount: 1250000,
+                variance: -150000,
+                utilizationRate: 70
+            }
+        ];
+
+        const sampleTransactions = [
+            {
+                id: 'txn_001',
+                transactionNumber: 'TXN-2025-001',
+                type: 'expense',
+                category: 'equipment',
+                subcategory: 'IT Equipment',
+                amount: 25000,
+                currency: 'USD',
+                description: 'Purchase of laptop computers for training center',
+                reference: 'PO-2025-001',
+                contractId: 'contract_001',
+                date: '2025-05-15',
+                status: 'paid',
+                paymentMethod: 'bank_transfer',
+                approvals: ['manager_1'],
+                createdAt: '2025-05-15'
+            },
+            {
+                id: 'txn_002',
+                transactionNumber: 'TXN-2025-002',
+                type: 'expense',
+                category: 'consultancy',
+                subcategory: 'Training Services',
+                amount: 18000,
+                currency: 'USD',
+                description: 'Monthly payment for digital literacy training program',
+                reference: 'INV-2025-007',
+                contractId: 'contract_002',
+                date: '2025-05-20',
+                status: 'approved',
+                paymentMethod: 'bank_transfer',
+                approvals: ['manager_2'],
+                createdAt: '2025-05-20'
+            },
+            {
+                id: 'txn_003',
+                transactionNumber: 'TXN-2025-003',
+                type: 'expense',
+                category: 'operational',
+                subcategory: 'Office Rent',
+                amount: 12000,
+                currency: 'USD',
+                description: 'Monthly office rent payment',
+                reference: 'RENT-MAY-2025',
+                contractId: null,
+                date: '2025-05-01',
+                status: 'paid',
+                paymentMethod: 'bank_transfer',
+                approvals: ['manager_3'],
+                createdAt: '2025-05-01'
+            },
+            {
+                id: 'txn_004',
+                transactionNumber: 'TXN-2025-004',
+                type: 'income',
+                category: 'funding',
+                subcategory: 'Grant Disbursement',
+                amount: 500000,
+                currency: 'USD',
+                description: 'Quarterly project funding disbursement',
+                reference: 'GRANT-Q2-2025',
+                contractId: null,
+                date: '2025-04-01',
+                status: 'received',
+                paymentMethod: 'bank_transfer',
+                approvals: ['manager_1'],
+                createdAt: '2025-04-01'
+            }
+        ];
+
+        const sampleInvoices = [
+            {
+                id: 'inv_001',
+                invoiceNumber: 'INV-2025-001',
+                vendorId: 'vendor_001',
+                vendorName: 'TechSolutions Maldives',
+                contractId: 'contract_001',
+                contractNumber: 'SAILS-CNT-2025-001',
+                amount: 75000,
+                currency: 'USD',
+                issueDate: '2025-05-10',
+                dueDate: '2025-06-10',
+                status: 'pending',
+                description: 'IT Equipment delivery milestone payment',
+                lineItems: [
+                    { description: 'Laptop computers', quantity: 50, unitPrice: 1200, total: 60000 },
+                    { description: 'Network equipment', quantity: 1, unitPrice: 15000, total: 15000 }
+                ]
+            },
+            {
+                id: 'inv_002',
+                invoiceNumber: 'INV-2025-002',
+                vendorId: 'vendor_002',
+                vendorName: 'Education Partners Ltd',
+                contractId: 'contract_002',
+                contractNumber: 'SAILS-CNT-2025-002',
+                amount: 14000,
+                currency: 'USD',
+                issueDate: '2025-05-25',
+                dueDate: '2025-06-25',
+                status: 'approved',
+                description: 'Monthly training services',
+                lineItems: [
+                    { description: 'Digital literacy training', quantity: 100, unitPrice: 140, total: 14000 }
+                ]
+            }
+        ];
+
+        const upcomingCashFlow = [
+            {
+                date: '2025-06-15',
+                description: 'Equipment payment due',
+                amount: -75000,
+                type: 'outflow'
+            },
+            {
+                date: '2025-06-25',
+                description: 'Training services payment',
+                amount: -14000,
+                type: 'outflow'
+            },
+            {
+                date: '2025-07-01',
+                description: 'Quarterly funding disbursement',
+                amount: 500000,
+                type: 'inflow'
+            },
+            {
+                date: '2025-07-05',
+                description: 'Office rent payment',
+                amount: -12000,
+                type: 'outflow'
+            }
+        ];
+
+        // Initialize Application
+        function initializeApp() {
+            // Load data from memory storage or use sample data
+            transactions = inMemoryStorage['sails_transactions'] ? 
+                JSON.parse(inMemoryStorage['sails_transactions']) : sampleTransactions;
+            invoices = inMemoryStorage['sails_invoices'] ? 
+                JSON.parse(inMemoryStorage['sails_invoices']) : sampleInvoices;
+            budgets = inMemoryStorage['sails_budgets'] ? 
+                JSON.parse(inMemoryStorage['sails_budgets']) : sampleBudgets;
+
+            // Render initial data
+            updateFinancialOverview();
+            renderCurrentTab();
+            setupEventListeners();
+            populateDropdowns();
+
+            // Show welcome message
+            setTimeout(() => {
+                showNotification('Financial management module loaded successfully', 'success');
+            }, 500);
+        }
+
+        // Tab Management
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Render tab content
+            renderCurrentTab();
+        }
+
+        function renderCurrentTab() {
+            switch (currentTab) {
+                case 'budget':
+                    renderBudgetManagement();
+                    break;
+                case 'transactions':
+                    renderTransactions();
+                    break;
+                case 'invoices':
+                    renderInvoices();
+                    break;
+                case 'cashflow':
+                    renderCashFlow();
+                    break;
+                case 'reports':
+                    renderReports();
+                    break;
+            }
+        }
+
+        // Render Functions
+        function renderBudgetManagement() {
+            const container = document.getElementById('budgetComparison');
+            container.innerHTML = '';
+            
+            budgets.forEach(budget => {
+                const budgetCard = document.createElement('div');
+                budgetCard.className = 'budget-item';
+                
+                const utilizationClass = budget.utilizationRate >= 90 ? 'danger' : 
+                                       budget.utilizationRate >= 75 ? 'warning' : 'success';
+                
+                budgetCard.innerHTML = `
+                    <div class="budget-header">
+                        <div class="budget-category">${budget.component} - ${budget.category}</div>
+                        <div class="budget-percentage badge badge-${utilizationClass}">${budget.utilizationRate}%</div>
+                    </div>
+                    
+                    <div class="budget-amounts">
+                        <div class="amount-item">
+                            <div class="amount-label">Budget</div>
+                            <div class="amount-value">$${(budget.budgetAmount / 1000000).toFixed(1)}M</div>
+                        </div>
+                        <div class="amount-item">
+                            <div class="amount-label">Actual</div>
+                            <div class="amount-value">$${(budget.actualAmount / 1000000).toFixed(1)}M</div>
+                        </div>
+                        <div class="amount-item">
+                            <div class="amount-label">Variance</div>
+                            <div class="amount-value" style="color: ${budget.variance < 0 ? 'var(--error-red)' : 'var(--success-green)'}">
+                                ${budget.variance > 0 ? '+' : ''}$${(budget.variance / 1000).toFixed(0)}K
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress">
+                        <div class="progress-bar ${utilizationClass}" style="width: ${budget.utilizationRate}%"></div>
+                    </div>
+                    
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
+                        Committed: $${(budget.committedAmount / 1000000).toFixed(1)}M
+                    </div>
+                `;
+                
+                container.appendChild(budgetCard);
+            });
+        }
+
+        function renderTransactions() {
+            const tbody = document.getElementById('transactionsTableBody');
+            const filteredTransactions = filterTransactionsData();
+            
+            tbody.innerHTML = '';
+            
+            if (filteredTransactions.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            <i class="fas fa-search" style="font-size: 24px; margin-bottom: 8px;"></i>
+                            <div>No transactions found</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            filteredTransactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${transaction.transactionNumber}</strong></td>
+                    <td>${formatDate(transaction.date)}</td>
+                    <td>${transaction.description}</td>
+                    <td><span class="badge badge-info">${formatCategory(transaction.category)}</span></td>
+                    <td><span class="badge badge-${getTransactionTypeClass(transaction.type)}">${formatType(transaction.type)}</span></td>
+                    <td>
+                        <strong style="color: ${transaction.type === 'income' ? 'var(--success-green)' : 'var(--error-red)'}">
+                            ${transaction.type === 'income' ? '+' : '-'}$${transaction.amount.toLocaleString()}
+                        </strong>
+                    </td>
+                    <td><span class="badge badge-${getTransactionStatusClass(transaction.status)}">${formatStatus(transaction.status)}</span></td>
+                    <td>
+                        <button class="btn btn-sm" onclick="editTransaction('${transaction.id}')" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteTransaction('${transaction.id}')" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderInvoices() {
+            const tbody = document.getElementById('invoicesTableBody');
+            tbody.innerHTML = '';
+            
+            invoices.forEach(invoice => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${invoice.invoiceNumber}</strong></td>
+                    <td>${invoice.vendorName}</td>
+                    <td>${invoice.contractNumber}</td>
+                    <td><strong>$${invoice.amount.toLocaleString()}</strong></td>
+                    <td>${formatDate(invoice.issueDate)}</td>
+                    <td>${formatDate(invoice.dueDate)}</td>
+                    <td><span class="badge badge-${getInvoiceStatusClass(invoice.status)}">${formatStatus(invoice.status)}</span></td>
+                    <td>
+                        <button class="btn btn-sm" onclick="viewInvoice('${invoice.id}')" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="approveInvoice('${invoice.id}')" title="Approve">
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderCashFlow() {
+            const container = document.getElementById('upcomingCashFlow');
+            container.innerHTML = '';
+            
+            upcomingCashFlow.forEach(item => {
+                const cashFlowItem = document.createElement('div');
+                cashFlowItem.className = 'cash-flow-item';
+                cashFlowItem.innerHTML = `
+                    <div class="cash-flow-info">
+                        <div class="cash-flow-description">${item.description}</div>
+                        <div class="cash-flow-date">${formatDate(item.date)}</div>
+                    </div>
+                    <div class="cash-flow-amount ${item.type === 'inflow' ? 'positive' : 'negative'}">
+                        ${item.amount > 0 ? '+' : ''}$${Math.abs(item.amount).toLocaleString()}
+                    </div>
+                `;
+                container.appendChild(cashFlowItem);
+            });
+        }
+
+        function renderReports() {
+            // Reports tab is mostly static buttons, no dynamic rendering needed
+        }
+
+        // Filter Functions
+        function filterTransactions() {
+            renderTransactions();
+        }
+
+        function filterTransactionsData() {
+            const search = document.getElementById('transactionSearch')?.value.toLowerCase() || '';
+            const type = document.getElementById('transactionTypeFilter')?.value || '';
+            const category = document.getElementById('transactionCategoryFilter')?.value || '';
+            const status = document.getElementById('transactionStatusFilter')?.value || '';
+
+            return transactions.filter(transaction => {
+                const matchesSearch = !search || 
+                    transaction.description.toLowerCase().includes(search) ||
+                    transaction.transactionNumber.toLowerCase().includes(search) ||
+                    transaction.reference.toLowerCase().includes(search);
+                
+                const matchesType = !type || transaction.type === type;
+                const matchesCategory = !category || transaction.category === category;
+                const matchesStatus = !status || transaction.status === status;
+                
+                return matchesSearch && matchesType && matchesCategory && matchesStatus;
+            });
+        }
+
+        // Modal Functions
+        function openTransactionModal(transactionId = null) {
+            editingTransaction = transactionId;
+            const modal = document.getElementById('transactionModal');
+            const form = document.getElementById('transactionForm');
+            
+            if (transactionId) {
+                const transaction = transactions.find(t => t.id === transactionId);
+                if (transaction) {
+                    document.getElementById('transactionModalTitle').textContent = 'Edit Transaction';
+                    populateTransactionForm(transaction);
+                }
+            } else {
+                document.getElementById('transactionModalTitle').textContent = 'New Transaction';
+                form.reset();
+                generateTransactionNumber();
+                document.getElementById('transactionDate').value = new Date().toISOString().split('T')[0];
+            }
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeTransactionModal() {
+            const modal = document.getElementById('transactionModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            editingTransaction = null;
+        }
+
+        function populateTransactionForm(transaction) {
+            document.getElementById('transactionNumber').value = transaction.transactionNumber;
+            document.getElementById('transactionType').value = transaction.type;
+            document.getElementById('transactionCategory').value = transaction.category;
+            document.getElementById('transactionDescription').value = transaction.description;
+            document.getElementById('transactionAmount').value = transaction.amount;
+            document.getElementById('transactionCurrency').value = transaction.currency;
+            document.getElementById('transactionDate').value = transaction.date;
+            document.getElementById('transactionReference').value = transaction.reference;
+            document.getElementById('relatedContract').value = transaction.contractId;
+            document.getElementById('paymentMethod').value = transaction.paymentMethod;
+        }
+
+        function generateTransactionNumber() {
+            const year = new Date().getFullYear();
+            const count = transactions.length + 1;
+            const number = `TXN-${year}-${count.toString().padStart(3, '0')}`;
+            document.getElementById('transactionNumber').value = number;
+        }
+
+        function updateTransactionFields() {
+            // Update available categories based on transaction type
+            const type = document.getElementById('transactionType').value;
+            const categorySelect = document.getElementById('transactionCategory');
+            
+            // This would typically update categories based on type
+            // For now, keeping all categories available
+        }
+
+        function populateDropdowns() {
+            // Populate contract dropdown
+            const contractSelect = document.getElementById('relatedContract');
+            contractSelect.innerHTML = '<option value="">Select Contract (Optional)</option>';
+            
+            // In a real application, this would fetch contracts from the contracts module
+            // For now, using sample data
+            const sampleContracts = [
+                { id: 'contract_001', number: 'SAILS-CNT-2025-001', title: 'IT Equipment Supply' },
+                { id: 'contract_002', number: 'SAILS-CNT-2025-002', title: 'Training Services' },
+                { id: 'contract_003', number: 'SAILS-CNT-2025-003', title: 'Office Renovation' }
+            ];
+            
+            sampleContracts.forEach(contract => {
+                const option = document.createElement('option');
+                option.value = contract.id;
+                option.textContent = contract.number + ' - ' + contract.title;
+                contractSelect.appendChild(option);
+            });
+        }
+
+        // CRUD Operations
+        function editTransaction(transactionId) {
+            openTransactionModal(transactionId);
+        }
+
+        function deleteTransaction(transactionId) {
+            if (confirm('Are you sure you want to delete this transaction?')) {
+                transactions = transactions.filter(t => t.id !== transactionId);
+                saveTransactions();
+                renderTransactions();
+                updateFinancialOverview();
+                showNotification('Transaction deleted successfully', 'success');
+            }
+        }
+
+        function saveTransaction(transactionData) {
+            if (editingTransaction) {
+                const index = transactions.findIndex(t => t.id === editingTransaction);
+                if (index !== -1) {
+                    transactions[index] = { ...transactions[index], ...transactionData, updatedAt: new Date().toISOString() };
+                    showNotification('Transaction updated successfully', 'success');
+                }
+            } else {
+                const newTransaction = {
+                    id: 'txn_' + Date.now(),
+                    ...transactionData,
+                    status: 'pending',
+                    approvals: [],
+                    createdAt: new Date().toISOString()
+                };
+                transactions.push(newTransaction);
+                showNotification('Transaction created successfully', 'success');
+            }
+            
+            saveTransactions();
+            renderTransactions();
+            updateFinancialOverview();
+            closeTransactionModal();
+        }
+
+        function saveTransactions() {
+            inMemoryStorage['sails_transactions'] = JSON.stringify(transactions);
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            const form = document.getElementById('transactionForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    transactionNumber: document.getElementById('transactionNumber').value,
+                    type: document.getElementById('transactionType').value,
+                    category: document.getElementById('transactionCategory').value,
+                    description: document.getElementById('transactionDescription').value,
+                    amount: parseFloat(document.getElementById('transactionAmount').value) || 0,
+                    currency: document.getElementById('transactionCurrency').value,
+                    date: document.getElementById('transactionDate').value,
+                    reference: document.getElementById('transactionReference').value,
+                    contractId: document.getElementById('relatedContract').value,
+                    paymentMethod: document.getElementById('paymentMethod').value
+                };
+                
+                if (validateTransactionForm(formData)) {
+                    saveTransaction(formData);
+                }
+            });
+            
+            // Close modal when clicking outside
+            document.getElementById('transactionModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeTransactionModal();
+                }
+            });
+        }
+
+        function validateTransactionForm(data) {
+            const errors = [];
+            
+            if (!data.type) errors.push('Transaction type is required');
+            if (!data.category) errors.push('Category is required');
+            if (!data.description) errors.push('Description is required');
+            if (!data.amount || data.amount <= 0) errors.push('Valid amount is required');
+            if (!data.date) errors.push('Transaction date is required');
+            
+            if (errors.length > 0) {
+                showNotification('Please fix the following errors: ' + errors.join(', '), 'error');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Financial Overview Update
+        function updateFinancialOverview() {
+            // Calculate totals from transactions
+            const totalIncome = transactions
+                .filter(t => t.type === 'income' && t.status === 'received')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const totalExpenses = transactions
+                .filter(t => t.type === 'expense' && (t.status === 'paid' || t.status === 'approved'))
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const pendingAmount = invoices
+                .filter(i => i.status === 'pending' || i.status === 'approved')
+                .reduce((sum, i) => sum + i.amount, 0);
+            
+            // Update displays
+            document.getElementById('totalBudget').textContent = '$18.2M';
+            document.getElementById('utilizedBudget').textContent = '$' + (totalExpenses / 1000000).toFixed(1) + 'M';
+            document.getElementById('remainingBudget').textContent = '$' + ((18200000 - totalExpenses) / 1000000).toFixed(1) + 'M';
+            document.getElementById('pendingPayments').textContent = '$' + (pendingAmount / 1000).toFixed(0) + 'K';
+        }
+
+        // Export Function
+        function exportFinancials() {
+            const exportData = {
+                transactions: transactions,
+                invoices: invoices,
+                budgets: budgets,
+                summary: {
+                    totalBudget: 18200000,
+                    utilizedBudget: transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0),
+                    pendingPayments: invoices.filter(i => i.status === 'pending').reduce((sum, i) => sum + i.amount, 0)
+                },
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'sails_financial_export.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Financial data exported successfully', 'success');
+        }
+
+        // Report Functions
+        function generateReport(reportType) {
+            const period = document.getElementById('reportPeriod').value;
+            const currency = document.getElementById('reportCurrency').value;
+            const format = document.getElementById('reportFormat').value;
+            
+            showNotification(`Generating ${reportType.replace('_', ' ')} report in ${format.toUpperCase()} format...`, 'info');
+            
+            // Simulate report generation
+            setTimeout(() => {
+                showNotification(`${reportType.replace('_', ' ')} report generated successfully`, 'success');
+            }, 2000);
+        }
+
+        function updateCashFlow() {
+            const period = document.getElementById('cashflowPeriodFilter').value;
+            showNotification(`Cash flow updated for ${period}`, 'info');
+            // This would update the chart based on the selected period
+        }
+
+        // Utility Functions
+        function formatCategory(category) {
+            const categoryMap = {
+                'personnel': 'Personnel',
+                'equipment': 'Equipment',
+                'training': 'Training',
+                'consultancy': 'Consultancy',
+                'operational': 'Operational',
+                'funding': 'Funding',
+                'other': 'Other'
+            };
+            return categoryMap[category] || category;
+        }
+
+        function formatType(type) {
+            const typeMap = {
+                'income': 'Income',
+                'expense': 'Expense',
+                'transfer': 'Transfer'
+            };
+            return typeMap[type] || type;
+        }
+
+        function formatStatus(status) {
+            return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function getTransactionTypeClass(type) {
+            const typeMap = {
+                'income': 'success',
+                'expense': 'danger',
+                'transfer': 'info'
+            };
+            return typeMap[type] || 'secondary';
+        }
+
+        function getTransactionStatusClass(status) {
+            const statusMap = {
+                'pending': 'warning',
+                'approved': 'info',
+                'paid': 'success',
+                'received': 'success',
+                'rejected': 'danger'
+            };
+            return statusMap[status] || 'secondary';
+        }
+
+        function getInvoiceStatusClass(status) {
+            const statusMap = {
+                'pending': 'warning',
+                'approved': 'success',
+                'paid': 'primary',
+                'overdue': 'danger',
+                'disputed': 'danger'
+            };
+            return statusMap[status] || 'secondary';
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // Navigation
+        function navigateTo(module) {
+            showNotification(`Navigating to ${module}...`, 'info');
+        }
+
+        // Placeholder functions for future implementation
+        function viewInvoice(invoiceId) {
+            showNotification('Invoice details would open here', 'info');
+        }
+
+        function approveInvoice(invoiceId) {
+            if (confirm('Are you sure you want to approve this invoice?')) {
+                const invoice = invoices.find(i => i.id === invoiceId);
+                if (invoice) {
+                    invoice.status = 'approved';
+                    renderInvoices();
+                    showNotification('Invoice approved successfully', 'success');
+                }
+            }
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--success-green)' : 
+                            type === 'error' ? 'var(--error-red)' : 
+                            type === 'warning' ? 'var(--warning-amber)' : 'var(--professional-blue)'};
+                color: white;
+                padding: 16px 20px;
+                border-radius: 8px;
+                box-shadow: var(--shadow-hover);
+                z-index: 10000;
+                font-weight: 500;
+                max-width: 300px;
+                animation: slideInRight 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>

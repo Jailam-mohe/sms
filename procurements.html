@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAILS Management System - Procurements</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-charcoal: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #404040;
+            --background-grey: #f5f5f5;
+            --pure-white: #ffffff;
+            --professional-blue: #0066cc;
+            --success-green: #28a745;
+            --error-red: #dc3545;
+            --warning-amber: #ffc107;
+            --border-color: #e0e0e0;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-hover: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background-grey);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--pure-white);
+            border-right: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .sidebar-nav {
+            padding: 16px 0;
+        }
+
+        .nav-group {
+            margin-bottom: 24px;
+        }
+
+        .nav-group-title {
+            padding: 8px 24px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 12px 24px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #f8f9fa;
+            border-left-color: var(--professional-blue);
+        }
+
+        .nav-item.active {
+            background: #e3f2fd;
+            border-left-color: var(--professional-blue);
+            color: var(--professional-blue);
+        }
+
+        .nav-item i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 24px;
+        }
+
+        /* Header */
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            background: var(--pure-white);
+            padding: 20px 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .header-title h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--pure-white);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--professional-blue);
+            color: white;
+            border-color: var(--professional-blue);
+        }
+
+        .btn-success {
+            background: var(--success-green);
+            color: white;
+            border-color: var(--success-green);
+        }
+
+        .btn-danger {
+            background: var(--error-red);
+            color: white;
+            border-color: var(--error-red);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--pure-white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Tabs */
+        .tabs-container {
+            margin-bottom: 24px;
+        }
+
+        .tabs-nav {
+            display: flex;
+            background: var(--pure-white);
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: var(--shadow);
+            gap: 4px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .tab-button.active {
+            background: var(--professional-blue);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Procurement Filters */
+        .procurement-filters {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: var(--pure-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-control {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        .search-input {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 250px;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            background: var(--pure-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Status Badges */
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .badge-secondary {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .badge-primary {
+            background: #b3d9ff;
+            color: #0056b3;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 5vh;
+        }
+
+        .modal-content {
+            background: var(--pure-white);
+            border-radius: 12px;
+            padding: 24px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: var(--shadow-hover);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 0;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--professional-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--pure-white);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Vendor Cards */
+        .vendor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .vendor-card {
+            background: var(--pure-white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease;
+        }
+
+        .vendor-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .vendor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .vendor-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .vendor-type {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .vendor-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .star {
+            color: #ffc107;
+            font-size: 14px;
+        }
+
+        .star.empty {
+            color: #e9ecef;
+        }
+
+        .vendor-info {
+            margin-bottom: 12px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        .info-label {
+            color: var(--text-secondary);
+        }
+
+        .info-value {
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .procurement-filters {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs-nav {
+                flex-direction: column;
+                gap: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>SAILS</h1>
+                <p>Management System</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-group">
+                    <div class="nav-group-title">Main</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Project Management</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('activities')">
+                        <i class="fas fa-tasks"></i>
+                        Activities
+                    </a>
+                    <a href="#" class="nav-item" onclick="navigateTo('deliverables')">
+                        <i class="fas fa-check-circle"></i>
+                        Deliverables
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Procurement & Contracts</div>
+                    <a href="#" class="nav-item active">
+                        <i class="fas fa-shopping-cart"></i>
+                        Procurements
+                    </a>
+                    <a href="#" class="nav-item" onclick="navigateTo('contracts')">
+                        <i class="fas fa-file-contract"></i>
+                        Contracts
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Resources</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('assets')">
+                        <i class="fas fa-cubes"></i>
+                        Assets
+                    </a>
+                    <a href="#" class="nav-item" onclick="navigateTo('finances')">
+                        <i class="fas fa-dollar-sign"></i>
+                        Finances
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Analytics</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('reports')">
+                        <i class="fas fa-chart-bar"></i>
+                        Reports
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">System</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('settings')">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="main-header">
+                <div class="header-title">
+                    <h2>Procurement Management</h2>
+                    <div class="header-subtitle">Manage tenders, vendors, and procurement processes</div>
+                </div>
+                <div class="header-actions">
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="openProcurementModal()">
+                            <i class="fas fa-plus"></i>
+                            New Procurement
+                        </button>
+                        <button class="btn" onclick="exportProcurements()">
+                            <i class="fas fa-download"></i>
+                            Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalProcurements">15</div>
+                    <div class="stat-label">Total Procurements</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeTenders">7</div>
+                    <div class="stat-label">Active Tenders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalVendors">23</div>
+                    <div class="stat-label">Registered Vendors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalValue">$2.4M</div>
+                    <div class="stat-label">Total Value</div>
+                </div>
+            </div>
+
+            <!-- Tabs Container -->
+            <div class="tabs-container">
+                <div class="tabs-nav">
+                    <button class="tab-button active" onclick="switchTab('procurements')">
+                        <i class="fas fa-shopping-cart"></i>
+                        Procurements
+                    </button>
+                    <button class="tab-button" onclick="switchTab('tenders')">
+                        <i class="fas fa-gavel"></i>
+                        Tenders
+                    </button>
+                    <button class="tab-button" onclick="switchTab('vendors')">
+                        <i class="fas fa-building"></i>
+                        Vendors
+                    </button>
+                    <button class="tab-button" onclick="switchTab('purchase-orders')">
+                        <i class="fas fa-file-invoice"></i>
+                        Purchase Orders
+                    </button>
+                </div>
+
+                <!-- Procurements Tab -->
+                <div class="tab-content active" id="procurements-tab">
+                    <!-- Procurement Filters -->
+                    <div class="procurement-filters">
+                        <div class="filter-group">
+                            <label class="filter-label">Search</label>
+                            <input type="text" class="search-input" placeholder="Search procurements..." id="procurementSearch" oninput="filterProcurements()">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Status</label>
+                            <select class="filter-control" id="statusFilter" onchange="filterProcurements()">
+                                <option value="">All Statuses</option>
+                                <option value="planning">Planning</option>
+                                <option value="tender">Tender</option>
+                                <option value="evaluation">Evaluation</option>
+                                <option value="award">Award</option>
+                                <option value="delivery">Delivery</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Category</label>
+                            <select class="filter-control" id="categoryFilter" onchange="filterProcurements()">
+                                <option value="">All Categories</option>
+                                <option value="goods">Goods</option>
+                                <option value="services">Services</option>
+                                <option value="works">Works</option>
+                                <option value="consulting">Consulting</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Method</label>
+                            <select class="filter-control" id="methodFilter" onchange="filterProcurements()">
+                                <option value="">All Methods</option>
+                                <option value="open_tender">Open Tender</option>
+                                <option value="limited_tender">Limited Tender</option>
+                                <option value="direct_purchase">Direct Purchase</option>
+                                <option value="framework_agreement">Framework Agreement</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Procurements Table -->
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Procurement #</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Method</th>
+                                    <th>Estimated Value</th>
+                                    <th>Status</th>
+                                    <th>Required By</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="procurementsTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tenders Tab -->
+                <div class="tab-content" id="tenders-tab">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Tender #</th>
+                                    <th>Title</th>
+                                    <th>Opening Date</th>
+                                    <th>Closing Date</th>
+                                    <th>Bids Received</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tendersTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Vendors Tab -->
+                <div class="tab-content" id="vendors-tab">
+                    <div class="vendor-grid" id="vendorsGrid">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Purchase Orders Tab -->
+                <div class="tab-content" id="purchase-orders-tab">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>PO #</th>
+                                    <th>Vendor</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Issue Date</th>
+                                    <th>Delivery Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="purchaseOrdersTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Procurement Modal -->
+    <div class="modal" id="procurementModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="procurementModalTitle">New Procurement</h3>
+                <button class="modal-close" onclick="closeProcurementModal()">&times;</button>
+            </div>
+            
+            <form id="procurementForm">
+                <div class="form-group">
+                    <label class="form-label">Procurement Number</label>
+                    <input type="text" class="form-control" id="procurementNumber" placeholder="AUTO-GENERATED" readonly>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control" id="procurementTitle" placeholder="Procurement title" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-control" id="procurementCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="goods">Goods</option>
+                            <option value="services">Services</option>
+                            <option value="works">Works</option>
+                            <option value="consulting">Consulting Services</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" id="procurementDescription" rows="3" placeholder="Detailed description of procurement requirements"></textarea>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Procurement Method</label>
+                        <select class="form-control" id="procurementMethod" required>
+                            <option value="">Select Method</option>
+                            <option value="open_tender">Open Tender</option>
+                            <option value="limited_tender">Limited Tender</option>
+                            <option value="direct_purchase">Direct Purchase</option>
+                            <option value="framework_agreement">Framework Agreement</option>
+                            <option value="request_quotation">Request for Quotation</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estimated Value (USD)</label>
+                        <input type="number" class="form-control" id="procurementValue" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Budget Line</label>
+                        <input type="text" class="form-control" id="procurementBudgetLine" placeholder="Budget reference">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Required By</label>
+                        <input type="date" class="form-control" id="procurementRequiredBy" required>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Procurement Officer</label>
+                        <select class="form-control" id="procurementOfficer">
+                            <option value="">Select Officer</option>
+                            <option value="officer_1">John Smith</option>
+                            <option value="officer_2">Sarah Johnson</option>
+                            <option value="officer_3">Ahmed Hassan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Priority</label>
+                        <select class="form-control" id="procurementPriority" required>
+                            <option value="">Select Priority</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn" onclick="closeProcurementModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Procurement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let procurements = [];
+        let vendors = [];
+        let tenders = [];
+        let purchaseOrders = [];
+        let currentTab = 'procurements';
+        let editingProcurement = null;
+
+        // In-Memory Storage
+        const inMemoryStorage = {};
+
+        // Sample Data
+        const sampleProcurements = [
+            {
+                id: 'proc_001',
+                procurementNumber: 'SAILS-2025-001',
+                title: 'IT Equipment and Software Procurement',
+                description: 'Procurement of computers, servers, and software licenses for project implementation',
+                category: 'goods',
+                method: 'open_tender',
+                estimatedValue: 150000,
+                budgetLine: 'BL-001-IT',
+                requiredBy: '2025-08-15',
+                status: 'tender',
+                priority: 'high',
+                procurementOfficer: 'officer_1',
+                officerName: 'John Smith',
+                createdAt: '2025-03-01',
+                updatedAt: '2025-05-20'
+            },
+            {
+                id: 'proc_002',
+                procurementNumber: 'SAILS-2025-002',
+                title: 'Training Services for Skills Development',
+                description: 'Professional training services for capacity building in digital skills',
+                category: 'services',
+                method: 'limited_tender',
+                estimatedValue: 85000,
+                budgetLine: 'BL-002-TRAINING',
+                requiredBy: '2025-09-30',
+                status: 'evaluation',
+                priority: 'medium',
+                procurementOfficer: 'officer_2',
+                officerName: 'Sarah Johnson',
+                createdAt: '2025-04-15',
+                updatedAt: '2025-05-25'
+            },
+            {
+                id: 'proc_003',
+                procurementNumber: 'SAILS-2025-003',
+                title: 'Office Renovation Works',
+                description: 'Renovation and upgrading of project office facilities',
+                category: 'works',
+                method: 'open_tender',
+                estimatedValue: 45000,
+                budgetLine: 'BL-003-INFRASTRUCTURE',
+                requiredBy: '2025-07-31',
+                status: 'planning',
+                priority: 'low',
+                procurementOfficer: 'officer_3',
+                officerName: 'Ahmed Hassan',
+                createdAt: '2025-05-01',
+                updatedAt: '2025-05-15'
+            }
+        ];
+
+        const sampleVendors = [
+            {
+                id: 'vendor_001',
+                name: 'TechSolutions Maldives',
+                type: 'IT Services',
+                email: 'contact@techsolutions.mv',
+                phone: '+960 330-1234',
+                address: 'Male, Maldives',
+                rating: 4.5,
+                contractsCount: 8,
+                totalValue: 450000,
+                status: 'active',
+                registrationDate: '2023-01-15'
+            },
+            {
+                id: 'vendor_002',
+                name: 'Education Partners Ltd',
+                type: 'Training Services',
+                email: 'info@edupartners.mv',
+                phone: '+960 330-5678',
+                address: 'Hulhumale, Maldives',
+                rating: 4.2,
+                contractsCount: 5,
+                totalValue: 280000,
+                status: 'active',
+                registrationDate: '2023-03-20'
+            },
+            {
+                id: 'vendor_003',
+                name: 'Construction Co. Maldives',
+                type: 'Construction',
+                email: 'projects@construction.mv',
+                phone: '+960 330-9012',
+                address: 'Vilimale, Maldives',
+                rating: 3.8,
+                contractsCount: 12,
+                totalValue: 750000,
+                status: 'active',
+                registrationDate: '2022-08-10'
+            }
+        ];
+
+        const sampleTenders = [
+            {
+                id: 'tender_001',
+                tenderNumber: 'TNR-2025-001',
+                title: 'IT Equipment Procurement Tender',
+                procurementId: 'proc_001',
+                openingDate: '2025-06-01',
+                closingDate: '2025-06-30',
+                bidsReceived: 5,
+                status: 'open',
+                estimatedValue: 150000
+            },
+            {
+                id: 'tender_002',
+                tenderNumber: 'TNR-2025-002',
+                title: 'Training Services Tender',
+                procurementId: 'proc_002',
+                openingDate: '2025-05-15',
+                closingDate: '2025-06-15',
+                bidsReceived: 3,
+                status: 'evaluation',
+                estimatedValue: 85000
+            }
+        ];
+
+        const samplePurchaseOrders = [
+            {
+                id: 'po_001',
+                poNumber: 'PO-2025-001',
+                vendorId: 'vendor_001',
+                vendorName: 'TechSolutions Maldives',
+                description: 'Laptop computers and accessories',
+                amount: 25000,
+                issueDate: '2025-04-15',
+                deliveryDate: '2025-05-15',
+                status: 'delivered'
+            },
+            {
+                id: 'po_002',
+                poNumber: 'PO-2025-002',
+                vendorId: 'vendor_002',
+                vendorName: 'Education Partners Ltd',
+                description: 'Digital literacy training program',
+                amount: 18000,
+                issueDate: '2025-05-01',
+                deliveryDate: '2025-06-30',
+                status: 'in_progress'
+            }
+        ];
+
+        // Initialize Application
+        function initializeApp() {
+            // Load data from memory storage or use sample data
+            procurements = inMemoryStorage['sails_procurements'] ? 
+                JSON.parse(inMemoryStorage['sails_procurements']) : sampleProcurements;
+            vendors = inMemoryStorage['sails_vendors'] ? 
+                JSON.parse(inMemoryStorage['sails_vendors']) : sampleVendors;
+            tenders = inMemoryStorage['sails_tenders'] ? 
+                JSON.parse(inMemoryStorage['sails_tenders']) : sampleTenders;
+            purchaseOrders = inMemoryStorage['sails_purchase_orders'] ? 
+                JSON.parse(inMemoryStorage['sails_purchase_orders']) : samplePurchaseOrders;
+
+            // Render initial data
+            updateStats();
+            renderCurrentTab();
+            setupEventListeners();
+
+            // Show welcome message
+            setTimeout(() => {
+                showNotification('Procurement management module loaded successfully', 'success');
+            }, 500);
+        }
+
+        // Tab Management
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Render tab content
+            renderCurrentTab();
+        }
+
+        function renderCurrentTab() {
+            switch (currentTab) {
+                case 'procurements':
+                    renderProcurements();
+                    break;
+                case 'tenders':
+                    renderTenders();
+                    break;
+                case 'vendors':
+                    renderVendors();
+                    break;
+                case 'purchase-orders':
+                    renderPurchaseOrders();
+                    break;
+            }
+        }
+
+        // Render Functions
+        function renderProcurements() {
+            const tbody = document.getElementById('procurementsTableBody');
+            const filteredProcurements = filterProcurementsData();
+            
+            tbody.innerHTML = '';
+            
+            if (filteredProcurements.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            <i class="fas fa-search" style="font-size: 24px; margin-bottom: 8px;"></i>
+                            <div>No procurements found</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            filteredProcurements.forEach(procurement => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${procurement.procurementNumber}</strong></td>
+                    <td>${procurement.title}</td>
+                    <td><span class="badge badge-info">${formatCategory(procurement.category)}</span></td>
+                    <td><span class="badge badge-secondary">${formatMethod(procurement.method)}</span></td>
+                    <td><strong>$${procurement.estimatedValue.toLocaleString()}</strong></td>
+                    <td><span class="badge badge-${getStatusClass(procurement.status)}">${formatStatus(procurement.status)}</span></td>
+                    <td>${formatDate(procurement.requiredBy)}</td>
+                    <td>
+                        <button class="btn btn-sm" onclick="editProcurement('${procurement.id}')" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteProcurement('${procurement.id}')" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderTenders() {
+            const tbody = document.getElementById('tendersTableBody');
+            tbody.innerHTML = '';
+            
+            tenders.forEach(tender => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${tender.tenderNumber}</strong></td>
+                    <td>${tender.title}</td>
+                    <td>${formatDate(tender.openingDate)}</td>
+                    <td>${formatDate(tender.closingDate)}</td>
+                    <td><span class="badge badge-primary">${tender.bidsReceived} bids</span></td>
+                    <td><span class="badge badge-${getTenderStatusClass(tender.status)}">${formatStatus(tender.status)}</span></td>
+                    <td>
+                        <button class="btn btn-sm" onclick="viewTender('${tender.id}')" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="evaluateTender('${tender.id}')" title="Evaluate">
+                            <i class="fas fa-clipboard-check"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderVendors() {
+            const container = document.getElementById('vendorsGrid');
+            container.innerHTML = '';
+            
+            vendors.forEach(vendor => {
+                const vendorCard = document.createElement('div');
+                vendorCard.className = 'vendor-card';
+                vendorCard.innerHTML = `
+                    <div class="vendor-header">
+                        <div>
+                            <div class="vendor-name">${vendor.name}</div>
+                            <div class="vendor-type">${vendor.type}</div>
+                        </div>
+                        <div class="vendor-rating">
+                            ${renderStars(vendor.rating)}
+                            <span style="margin-left: 4px; font-size: 12px; color: var(--text-secondary);">${vendor.rating}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="vendor-info">
+                        <div class="info-row">
+                            <span class="info-label">Email:</span>
+                            <span class="info-value">${vendor.email}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Phone:</span>
+                            <span class="info-value">${vendor.phone}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Contracts:</span>
+                            <span class="info-value">${vendor.contractsCount}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Total Value:</span>
+                            <span class="info-value">$${vendor.totalValue.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 8px; margin-top: 12px;">
+                        <button class="btn btn-sm" onclick="editVendor('${vendor.id}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="viewVendorContracts('${vendor.id}')">
+                            <i class="fas fa-file-contract"></i> Contracts
+                        </button>
+                    </div>
+                `;
+                container.appendChild(vendorCard);
+            });
+        }
+
+        function renderPurchaseOrders() {
+            const tbody = document.getElementById('purchaseOrdersTableBody');
+            tbody.innerHTML = '';
+            
+            purchaseOrders.forEach(po => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${po.poNumber}</strong></td>
+                    <td>${po.vendorName}</td>
+                    <td>${po.description}</td>
+                    <td><strong>$${po.amount.toLocaleString()}</strong></td>
+                    <td>${formatDate(po.issueDate)}</td>
+                    <td>${formatDate(po.deliveryDate)}</td>
+                    <td><span class="badge badge-${getPOStatusClass(po.status)}">${formatPOStatus(po.status)}</span></td>
+                    <td>
+                        <button class="btn btn-sm" onclick="viewPO('${po.id}')" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="updatePOStatus('${po.id}')" title="Update Status">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Filter Functions
+        function filterProcurements() {
+            renderProcurements();
+        }
+
+        function filterProcurementsData() {
+            const search = document.getElementById('procurementSearch')?.value.toLowerCase() || '';
+            const status = document.getElementById('statusFilter')?.value || '';
+            const category = document.getElementById('categoryFilter')?.value || '';
+            const method = document.getElementById('methodFilter')?.value || '';
+
+            return procurements.filter(procurement => {
+                const matchesSearch = !search || 
+                    procurement.title.toLowerCase().includes(search) ||
+                    procurement.procurementNumber.toLowerCase().includes(search) ||
+                    procurement.description.toLowerCase().includes(search);
+                
+                const matchesStatus = !status || procurement.status === status;
+                const matchesCategory = !category || procurement.category === category;
+                const matchesMethod = !method || procurement.method === method;
+                
+                return matchesSearch && matchesStatus && matchesCategory && matchesMethod;
+            });
+        }
+
+        // Modal Functions
+        function openProcurementModal(procurementId = null) {
+            editingProcurement = procurementId;
+            const modal = document.getElementById('procurementModal');
+            const form = document.getElementById('procurementForm');
+            
+            if (procurementId) {
+                const procurement = procurements.find(p => p.id === procurementId);
+                if (procurement) {
+                    document.getElementById('procurementModalTitle').textContent = 'Edit Procurement';
+                    populateProcurementForm(procurement);
+                }
+            } else {
+                document.getElementById('procurementModalTitle').textContent = 'New Procurement';
+                form.reset();
+                generateProcurementNumber();
+            }
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProcurementModal() {
+            const modal = document.getElementById('procurementModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            editingProcurement = null;
+        }
+
+        function populateProcurementForm(procurement) {
+            document.getElementById('procurementNumber').value = procurement.procurementNumber;
+            document.getElementById('procurementTitle').value = procurement.title;
+            document.getElementById('procurementDescription').value = procurement.description;
+            document.getElementById('procurementCategory').value = procurement.category;
+            document.getElementById('procurementMethod').value = procurement.method;
+            document.getElementById('procurementValue').value = procurement.estimatedValue;
+            document.getElementById('procurementBudgetLine').value = procurement.budgetLine;
+            document.getElementById('procurementRequiredBy').value = procurement.requiredBy;
+            document.getElementById('procurementOfficer').value = procurement.procurementOfficer;
+            document.getElementById('procurementPriority').value = procurement.priority;
+        }
+
+        function generateProcurementNumber() {
+            const year = new Date().getFullYear();
+            const count = procurements.length + 1;
+            const number = `SAILS-${year}-${count.toString().padStart(3, '0')}`;
+            document.getElementById('procurementNumber').value = number;
+        }
+
+        // CRUD Operations
+        function editProcurement(procurementId) {
+            openProcurementModal(procurementId);
+        }
+
+        function deleteProcurement(procurementId) {
+            if (confirm('Are you sure you want to delete this procurement?')) {
+                procurements = procurements.filter(p => p.id !== procurementId);
+                saveProcurements();
+                renderProcurements();
+                updateStats();
+                showNotification('Procurement deleted successfully', 'success');
+            }
+        }
+
+        function saveProcurement(procurementData) {
+            if (editingProcurement) {
+                const index = procurements.findIndex(p => p.id === editingProcurement);
+                if (index !== -1) {
+                    procurements[index] = { ...procurements[index], ...procurementData, updatedAt: new Date().toISOString() };
+                    showNotification('Procurement updated successfully', 'success');
+                }
+            } else {
+                const newProcurement = {
+                    id: 'proc_' + Date.now(),
+                    ...procurementData,
+                    status: 'planning',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                procurements.push(newProcurement);
+                showNotification('Procurement created successfully', 'success');
+            }
+            
+            saveProcurements();
+            renderProcurements();
+            updateStats();
+            closeProcurementModal();
+        }
+
+        function saveProcurements() {
+            inMemoryStorage['sails_procurements'] = JSON.stringify(procurements);
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            const form = document.getElementById('procurementForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    procurementNumber: document.getElementById('procurementNumber').value,
+                    title: document.getElementById('procurementTitle').value,
+                    description: document.getElementById('procurementDescription').value,
+                    category: document.getElementById('procurementCategory').value,
+                    method: document.getElementById('procurementMethod').value,
+                    estimatedValue: parseFloat(document.getElementById('procurementValue').value) || 0,
+                    budgetLine: document.getElementById('procurementBudgetLine').value,
+                    requiredBy: document.getElementById('procurementRequiredBy').value,
+                    procurementOfficer: document.getElementById('procurementOfficer').value,
+                    officerName: getOfficerName(document.getElementById('procurementOfficer').value),
+                    priority: document.getElementById('procurementPriority').value
+                };
+                
+                if (validateProcurementForm(formData)) {
+                    saveProcurement(formData);
+                }
+            });
+            
+            // Close modal when clicking outside
+            document.getElementById('procurementModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeProcurementModal();
+                }
+            });
+        }
+
+        function validateProcurementForm(data) {
+            const errors = [];
+            
+            if (!data.title) errors.push('Title is required');
+            if (!data.category) errors.push('Category is required');
+            if (!data.method) errors.push('Procurement method is required');
+            if (!data.estimatedValue || data.estimatedValue <= 0) errors.push('Valid estimated value is required');
+            if (!data.requiredBy) errors.push('Required by date is required');
+            if (!data.priority) errors.push('Priority is required');
+            
+            if (errors.length > 0) {
+                showNotification('Please fix the following errors: ' + errors.join(', '), 'error');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Stats Update
+        function updateStats() {
+            document.getElementById('totalProcurements').textContent = procurements.length;
+            document.getElementById('activeTenders').textContent = tenders.filter(t => t.status === 'open').length;
+            document.getElementById('totalVendors').textContent = vendors.length;
+            
+            const totalValue = procurements.reduce((sum, p) => sum + p.estimatedValue, 0);
+            document.getElementById('totalValue').textContent = '$' + (totalValue / 1000000).toFixed(1) + 'M';
+        }
+
+        // Export Function
+        function exportProcurements() {
+            const exportData = {
+                procurements: procurements,
+                vendors: vendors,
+                tenders: tenders,
+                purchaseOrders: purchaseOrders,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'sails_procurements_export.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Procurement data exported successfully', 'success');
+        }
+
+        // Utility Functions
+        function formatCategory(category) {
+            const categoryMap = {
+                'goods': 'Goods',
+                'services': 'Services',
+                'works': 'Works',
+                'consulting': 'Consulting'
+            };
+            return categoryMap[category] || category;
+        }
+
+        function formatMethod(method) {
+            const methodMap = {
+                'open_tender': 'Open Tender',
+                'limited_tender': 'Limited Tender',
+                'direct_purchase': 'Direct Purchase',
+                'framework_agreement': 'Framework Agreement',
+                'request_quotation': 'RFQ'
+            };
+            return methodMap[method] || method;
+        }
+
+        function formatStatus(status) {
+            return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function formatPOStatus(status) {
+            const statusMap = {
+                'in_progress': 'In Progress',
+                'delivered': 'Delivered',
+                'cancelled': 'Cancelled'
+            };
+            return statusMap[status] || status;
+        }
+
+        function getStatusClass(status) {
+            const statusMap = {
+                'planning': 'secondary',
+                'tender': 'info',
+                'evaluation': 'warning',
+                'award': 'primary',
+                'delivery': 'info',
+                'completed': 'success'
+            };
+            return statusMap[status] || 'secondary';
+        }
+
+        function getTenderStatusClass(status) {
+            const statusMap = {
+                'open': 'success',
+                'evaluation': 'warning',
+                'awarded': 'primary',
+                'cancelled': 'danger'
+            };
+            return statusMap[status] || 'secondary';
+        }
+
+        function getPOStatusClass(status) {
+            const statusMap = {
+                'in_progress': 'info',
+                'delivered': 'success',
+                'cancelled': 'danger'
+            };
+            return statusMap[status] || 'secondary';
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function getOfficerName(officerId) {
+            const officerMap = {
+                'officer_1': 'John Smith',
+                'officer_2': 'Sarah Johnson',
+                'officer_3': 'Ahmed Hassan'
+            };
+            return officerMap[officerId] || '';
+        }
+
+        function renderStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            let starsHtml = '';
+            
+            for (let i = 0; i < 5; i++) {
+                if (i < fullStars) {
+                    starsHtml += '<i class="fas fa-star star"></i>';
+                } else if (i === fullStars && hasHalfStar) {
+                    starsHtml += '<i class="fas fa-star-half-alt star"></i>';
+                } else {
+                    starsHtml += '<i class="far fa-star star empty"></i>';
+                }
+            }
+            
+            return starsHtml;
+        }
+
+        // Navigation
+        function navigateTo(module) {
+            showNotification(`Navigating to ${module}...`, 'info');
+        }
+
+        // Placeholder functions for future implementation
+        function viewTender(tenderId) {
+            showNotification('Tender details view would open here', 'info');
+        }
+
+        function evaluateTender(tenderId) {
+            showNotification('Tender evaluation interface would open here', 'info');
+        }
+
+        function editVendor(vendorId) {
+            showNotification('Vendor editing form would open here', 'info');
+        }
+
+        function viewVendorContracts(vendorId) {
+            showNotification('Vendor contracts view would open here', 'info');
+        }
+
+        function viewPO(poId) {
+            showNotification('Purchase order details would open here', 'info');
+        }
+
+        function updatePOStatus(poId) {
+            showNotification('PO status update form would open here', 'info');
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--success-green)' : 
+                            type === 'error' ? 'var(--error-red)' : 
+                            type === 'warning' ? 'var(--warning-amber)' : 'var(--professional-blue)'};
+                color: white;
+                padding: 16px 20px;
+                border-radius: 8px;
+                box-shadow: var(--shadow-hover);
+                z-index: 10000;
+                font-weight: 500;
+                max-width: 300px;
+                animation: slideInRight 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>

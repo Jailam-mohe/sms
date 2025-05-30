@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAILS Management System - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-charcoal: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #404040;
+            --background-grey: #f5f5f5;
+            --pure-white: #ffffff;
+            --professional-blue: #0066cc;
+            --success-green: #28a745;
+            --error-red: #dc3545;
+            --warning-amber: #ffc107;
+            --border-color: #e0e0e0;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-hover: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 14px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: var(--pure-white);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 600px;
+        }
+
+        .login-left {
+            background: var(--dark-charcoal);
+            color: var(--pure-white);
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-left::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            z-index: 1;
+        }
+
+        .login-left-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--pure-white);
+        }
+
+        .tagline {
+            font-size: 18px;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 40px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .feature-item i {
+            color: var(--professional-blue);
+            margin-right: 12px;
+            width: 20px;
+        }
+
+        .login-right {
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-header h2 {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .login-form {
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            background: var(--pure-white);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--professional-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .form-control.error {
+            border-color: var(--error-red);
+        }
+
+        .form-error {
+            color: var(--error-red);
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .password-field {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .password-toggle:hover {
+            color: var(--text-primary);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--professional-blue);
+        }
+
+        .forgot-password {
+            color: var(--professional-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 8px;
+            border: none;
+            background: var(--professional-blue);
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .btn:hover {
+            background: #0052a3;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn:disabled {
+            background: var(--border-color);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-loading {
+            position: relative;
+        }
+
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .demo-accounts {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 24px;
+        }
+
+        .demo-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .demo-account {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 12px;
+        }
+
+        .demo-account:last-child {
+            border-bottom: none;
+        }
+
+        .demo-role {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .demo-credentials {
+            color: var(--text-secondary);
+            font-family: 'Courier New', monospace;
+        }
+
+        .demo-login-btn {
+            background: none;
+            border: 1px solid var(--professional-blue);
+            color: var(--professional-blue);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .demo-login-btn:hover {
+            background: var(--professional-blue);
+            color: white;
+        }
+
+        .footer-text {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-top: 24px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid var(--success-green);
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid var(--error-red);
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid var(--professional-blue);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .login-container {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .login-left {
+                display: none;
+            }
+
+            .login-right {
+                padding: 40px 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 16px;
+            }
+
+            .login-right {
+                padding: 24px 20px;
+            }
+
+            .login-header h2 {
+                font-size: 24px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .feature-item {
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .feature-item:nth-child(1) { animation-delay: 0.1s; }
+        .feature-item:nth-child(2) { animation-delay: 0.2s; }
+        .feature-item:nth-child(3) { animation-delay: 0.3s; }
+        .feature-item:nth-child(4) { animation-delay: 0.4s; }
+        .feature-item:nth-child(5) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Left Side - Branding -->
+        <div class="login-left">
+            <div class="login-left-content">
+                <div class="logo">SAILS</div>
+                <div class="tagline">Skills and Unemployment Insurance for Labor and Social Protection</div>
+                <div class="subtitle">Comprehensive project management system for effective governance and transparency in development projects.</div>
+                
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <i class="fas fa-tasks"></i>
+                        Activity & Project Management
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-shopping-cart"></i>
+                        Procurement & Contract Management
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-dollar-sign"></i>
+                        Financial Tracking & Reporting
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-cubes"></i>
+                        Asset & Resource Management
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-chart-bar"></i>
+                        Analytics & Performance Monitoring
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="login-right">
+            <div class="login-header">
+                <h2>Welcome Back</h2>
+                <p>Please sign in to your account to continue</p>
+            </div>
+
+            <!-- Alert Messages -->
+            <div class="alert alert-info" id="alertInfo">
+                <i class="fas fa-info-circle" style="margin-right: 8px;"></i>
+                <span id="alertInfoText"></span>
+            </div>
+            <div class="alert alert-error" id="alertError">
+                <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
+                <span id="alertErrorText"></span>
+            </div>
+            <div class="alert alert-success" id="alertSuccess">
+                <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+                <span id="alertSuccessText"></span>
+            </div>
+
+            <!-- Login Form -->
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="username">Username or Email</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username or email" required>
+                    <div class="form-error" id="usernameError">Please enter a valid username or email</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="password-field">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <i class="fas fa-eye" id="passwordIcon"></i>
+                        </button>
+                    </div>
+                    <div class="form-error" id="passwordError">Password must be at least 8 characters</div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-password" onclick="showForgotPassword()">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn" id="loginBtn">
+                    <span id="loginBtnText">Sign In</span>
+                    <div class="loading-spinner" id="loginSpinner" style="display: none;"></div>
+                </button>
+            </form>
+
+            <!-- Demo Accounts -->
+            <div class="demo-accounts">
+                <div class="demo-title">Demo Accounts</div>
+                <div class="demo-account">
+                    <div>
+                        <div class="demo-role">Project Director</div>
+                        <div class="demo-credentials">admin / admin123</div>
+                    </div>
+                    <button class="demo-login-btn" onclick="quickLogin('admin', 'admin123', 'Project Director')">
+                        Quick Login
+                    </button>
+                </div>
+                <div class="demo-account">
+                    <div>
+                        <div class="demo-role">Procurement Officer</div>
+                        <div class="demo-credentials">procurement / proc123</div>
+                    </div>
+                    <button class="demo-login-btn" onclick="quickLogin('procurement', 'proc123', 'Procurement Officer')">
+                        Quick Login
+                    </button>
+                </div>
+                <div class="demo-account">
+                    <div>
+                        <div class="demo-role">Finance Officer</div>
+                        <div class="demo-credentials">finance / fin123</div>
+                    </div>
+                    <button class="demo-login-btn" onclick="quickLogin('finance', 'fin123', 'Finance Officer')">
+                        Quick Login
+                    </button>
+                </div>
+            </div>
+
+            <div class="footer-text">
+                © 2025 SAILS Management System. All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // In-Memory Storage (localStorage not available in sandboxed environment)
+        const inMemoryStorage = {};
+
+        // Demo user database
+        const demoUsers = {
+            'admin': {
+                password: 'admin123',
+                name: 'Jailam Mohe',
+                role: 'Project Director',
+                avatar: 'JM',
+                permissions: ['all']
+            },
+            'procurement': {
+                password: 'proc123',
+                name: 'Sarah Johnson',
+                role: 'Procurement Officer',
+                avatar: 'SJ',
+                permissions: ['procurements', 'contracts', 'assets']
+            },
+            'finance': {
+                password: 'fin123',
+                name: 'Ahmed Hassan',
+                role: 'Finance Officer',
+                avatar: 'AH',
+                permissions: ['finances', 'contracts', 'reports']
+            },
+            'manager': {
+                password: 'mgr123',
+                name: 'Maria Santos',
+                role: 'Component Manager',
+                avatar: 'MS',
+                permissions: ['activities', 'deliverables', 'assets']
+            }
+        };
+
+        // Initialize login page
+        function initializeLogin() {
+            // Check if user is already logged in
+            const currentUser = inMemoryStorage['sails_current_user'];
+            if (currentUser) {
+                showAlert('info', 'You are already logged in. Redirecting to dashboard...');
+                setTimeout(() => {
+                    redirectToDashboard();
+                }, 2000);
+                return;
+            }
+
+            // Setup form handlers
+            setupFormHandlers();
+            
+            // Show welcome message
+            setTimeout(() => {
+                showAlert('info', 'Welcome to SAILS Management System. Please sign in to continue.');
+            }, 500);
+        }
+
+        // Setup form event handlers
+        function setupFormHandlers() {
+            const loginForm = document.getElementById('loginForm');
+            loginForm.addEventListener('submit', handleLogin);
+
+            // Real-time validation
+            const usernameField = document.getElementById('username');
+            const passwordField = document.getElementById('password');
+
+            usernameField.addEventListener('blur', validateUsername);
+            passwordField.addEventListener('blur', validatePassword);
+            
+            usernameField.addEventListener('input', clearFieldError);
+            passwordField.addEventListener('input', clearFieldError);
+
+            // Enter key handling
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    const activeElement = document.activeElement;
+                    if (activeElement.tagName === 'INPUT') {
+                        handleLogin(e);
+                    }
+                }
+            });
+        }
+
+        // Handle login form submission
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // Validate inputs
+            if (!validateLogin(username, password)) {
+                return;
+            }
+
+            // Show loading state
+            setLoginLoading(true);
+            hideAllAlerts();
+
+            try {
+                // Simulate API call delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // Authenticate user
+                const user = authenticateUser(username, password);
+                
+                if (user) {
+                    // Store user session
+                    storeUserSession(user, rememberMe);
+                    
+                    showAlert('success', `Welcome ${user.name}! Redirecting to dashboard...`);
+                    
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        redirectToDashboard();
+                    }, 2000);
+                } else {
+                    showAlert('error', 'Invalid username or password. Please try again.');
+                }
+            } catch (error) {
+                showAlert('error', 'Login failed. Please check your connection and try again.');
+            } finally {
+                setLoginLoading(false);
+            }
+        }
+
+        // Authenticate user credentials
+        function authenticateUser(username, password) {
+            const user = demoUsers[username.toLowerCase()];
+            
+            if (user && user.password === password) {
+                return {
+                    id: `user_${Date.now()}`,
+                    username: username,
+                    name: user.name,
+                    role: user.role,
+                    avatar: user.avatar,
+                    permissions: user.permissions,
+                    loginTime: new Date().toISOString()
+                };
+            }
+            
+            return null;
+        }
+
+        // Store user session
+        function storeUserSession(user, rememberMe) {
+            const sessionData = {
+                ...user,
+                rememberMe: rememberMe,
+                expiresAt: rememberMe ? 
+                    new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() : // 30 days
+                    new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString() // 8 hours
+            };
+
+            inMemoryStorage['sails_current_user'] = JSON.stringify(sessionData);
+            
+            // Store login history
+            const loginHistory = JSON.parse(inMemoryStorage['sails_login_history'] || '[]');
+            loginHistory.unshift({
+                username: user.username,
+                name: user.name,
+                role: user.role,
+                loginTime: user.loginTime,
+                rememberMe: rememberMe
+            });
+            
+            // Keep only last 10 logins
+            loginHistory.splice(10);
+            inMemoryStorage['sails_login_history'] = JSON.stringify(loginHistory);
+        }
+
+        // Quick login for demo accounts
+        function quickLogin(username, password, role) {
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+            
+            showAlert('info', `Logging in as ${role}...`);
+            
+            setTimeout(() => {
+                const event = new Event('submit', { bubbles: true, cancelable: true });
+                document.getElementById('loginForm').dispatchEvent(event);
+            }, 500);
+        }
+
+        // Validation functions
+        function validateLogin(username, password) {
+            let isValid = true;
+
+            if (!validateUsername()) {
+                isValid = false;
+            }
+
+            if (!validatePassword()) {
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function validateUsername() {
+            const username = document.getElementById('username').value.trim();
+            const usernameField = document.getElementById('username');
+            const errorElement = document.getElementById('usernameError');
+
+            if (!username) {
+                showFieldError(usernameField, errorElement, 'Username is required');
+                return false;
+            }
+
+            if (username.length < 3) {
+                showFieldError(usernameField, errorElement, 'Username must be at least 3 characters');
+                return false;
+            }
+
+            clearFieldError(usernameField, errorElement);
+            return true;
+        }
+
+        function validatePassword() {
+            const password = document.getElementById('password').value;
+            const passwordField = document.getElementById('password');
+            const errorElement = document.getElementById('passwordError');
+
+            if (!password) {
+                showFieldError(passwordField, errorElement, 'Password is required');
+                return false;
+            }
+
+            if (password.length < 6) {
+                showFieldError(passwordField, errorElement, 'Password must be at least 6 characters');
+                return false;
+            }
+
+            clearFieldError(passwordField, errorElement);
+            return true;
+        }
+
+        // UI Helper functions
+        function showFieldError(field, errorElement, message) {
+            field.classList.add('error');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        function clearFieldError(field, errorElement) {
+            if (typeof field === 'object') {
+                field.classList.remove('error');
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+            } else {
+                // Handle event object
+                const fieldElement = field.target;
+                fieldElement.classList.remove('error');
+                const errorId = fieldElement.id + 'Error';
+                const errorElement = document.getElementById(errorId);
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+            }
+        }
+
+        function setLoginLoading(loading) {
+            const loginBtn = document.getElementById('loginBtn');
+            const loginBtnText = document.getElementById('loginBtnText');
+            const loginSpinner = document.getElementById('loginSpinner');
+
+            if (loading) {
+                loginBtn.disabled = true;
+                loginBtn.classList.add('btn-loading');
+                loginBtnText.textContent = 'Signing In...';
+                loginSpinner.style.display = 'block';
+            } else {
+                loginBtn.disabled = false;
+                loginBtn.classList.remove('btn-loading');
+                loginBtnText.textContent = 'Sign In';
+                loginSpinner.style.display = 'none';
+            }
+        }
+
+        function showAlert(type, message) {
+            hideAllAlerts();
+            
+            const alertElement = document.getElementById(`alert${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            const alertText = document.getElementById(`alert${type.charAt(0).toUpperCase() + type.slice(1)}Text`);
+            
+            if (alertElement && alertText) {
+                alertText.textContent = message;
+                alertElement.style.display = 'block';
+                
+                // Auto-hide info alerts after 5 seconds
+                if (type === 'info') {
+                    setTimeout(() => {
+                        alertElement.style.display = 'none';
+                    }, 5000);
+                }
+            }
+        }
+
+        function hideAllAlerts() {
+            document.getElementById('alertInfo').style.display = 'none';
+            document.getElementById('alertError').style.display = 'none';
+            document.getElementById('alertSuccess').style.display = 'none';
+        }
+
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const passwordIcon = document.getElementById('passwordIcon');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                passwordIcon.classList.remove('fa-eye');
+                passwordIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                passwordIcon.classList.remove('fa-eye-slash');
+                passwordIcon.classList.add('fa-eye');
+            }
+        }
+
+        function showForgotPassword() {
+            showAlert('info', 'Password reset functionality would be implemented here. For demo, use the provided demo accounts.');
+        }
+
+        function redirectToDashboard() {
+            // In a real application, this would redirect to index.html
+            showAlert('success', 'Login successful! In a real system, this would redirect to the dashboard.');
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeLogin);
+
+        // Session management
+        function checkSessionValidity() {
+            const userData = inMemoryStorage['sails_current_user'];
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    if (user.expiresAt && new Date(user.expiresAt) < new Date()) {
+                        // Session expired
+                        delete inMemoryStorage['sails_current_user'];
+                        showAlert('warning', 'Your session has expired. Please log in again.');
+                    }
+                } catch (e) {
+                    delete inMemoryStorage['sails_current_user'];
+                }
+            }
+        }
+
+        // Check session validity on page load
+        checkSessionValidity();
+
+        // Auto-focus on username field
+        setTimeout(() => {
+            document.getElementById('username').focus();
+        }, 500);
+    </script>
+</body>
+</html>

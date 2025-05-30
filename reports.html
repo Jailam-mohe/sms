@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAILS Management System - Reports & Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-charcoal: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #404040;
+            --background-grey: #f5f5f5;
+            --pure-white: #ffffff;
+            --professional-blue: #0066cc;
+            --success-green: #28a745;
+            --error-red: #dc3545;
+            --warning-amber: #ffc107;
+            --border-color: #e0e0e0;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-hover: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background-grey);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--pure-white);
+            border-right: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .sidebar-nav {
+            padding: 16px 0;
+        }
+
+        .nav-group {
+            margin-bottom: 24px;
+        }
+
+        .nav-group-title {
+            padding: 8px 24px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 12px 24px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: #f8f9fa;
+            border-left-color: var(--professional-blue);
+        }
+
+        .nav-item.active {
+            background: #e3f2fd;
+            border-left-color: var(--professional-blue);
+            color: var(--professional-blue);
+        }
+
+        .nav-item i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 24px;
+        }
+
+        /* Header */
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            background: var(--pure-white);
+            padding: 20px 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .header-title h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--pure-white);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--professional-blue);
+            color: white;
+            border-color: var(--professional-blue);
+        }
+
+        .btn-success {
+            background: var(--success-green);
+            color: white;
+            border-color: var(--success-green);
+        }
+
+        .btn-lg {
+            padding: 12px 20px;
+            font-size: 16px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--pure-white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Report Categories */
+        .report-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .report-category {
+            background: var(--pure-white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease;
+        }
+
+        .report-category:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .category-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            margin-right: 16px;
+        }
+
+        .category-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .category-description {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .report-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .report-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .report-item:last-child {
+            border-bottom: none;
+        }
+
+        .report-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .report-generate {
+            background: var(--professional-blue);
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .report-generate:hover {
+            background: #0052a3;
+        }
+
+        /* Dashboard Summary */
+        .dashboard-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .summary-card {
+            background: var(--pure-white);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .summary-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Chart Containers */
+        .chart-container {
+            height: 300px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin: 16px 0;
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--professional-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .report-categories {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-summary {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>SAILS</h1>
+                <p>Management System</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-group">
+                    <div class="nav-group-title">Main</div>
+                    <a class="nav-item" onclick="navigateTo('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Project Management</div>
+                    <a class="nav-item" onclick="navigateTo('activities')">
+                        <i class="fas fa-tasks"></i>
+                        Activities
+                    </a>
+                    <a class="nav-item" onclick="navigateTo('deliverables')">
+                        <i class="fas fa-check-circle"></i>
+                        Deliverables
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Procurement & Contracts</div>
+                    <a class="nav-item" onclick="navigateTo('procurements')">
+                        <i class="fas fa-shopping-cart"></i>
+                        Procurements
+                    </a>
+                    <a class="nav-item" onclick="navigateTo('contracts')">
+                        <i class="fas fa-file-contract"></i>
+                        Contracts
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Resources</div>
+                    <a class="nav-item" onclick="navigateTo('assets')">
+                        <i class="fas fa-cubes"></i>
+                        Assets
+                    </a>
+                    <a class="nav-item" onclick="navigateTo('finances')">
+                        <i class="fas fa-dollar-sign"></i>
+                        Finances
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Analytics</div>
+                    <a class="nav-item active">
+                        <i class="fas fa-chart-bar"></i>
+                        Reports
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">System</div>
+                    <a class="nav-item" onclick="navigateTo('settings')">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="main-header">
+                <div class="header-title">
+                    <h2>Reports & Analytics</h2>
+                    <div class="header-subtitle">Comprehensive reporting and data visualization</div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="openCustomReportBuilder()">
+                        <i class="fas fa-plus"></i>
+                        Custom Report
+                    </button>
+                    <button class="btn" onclick="scheduleReport()">
+                        <i class="fas fa-clock"></i>
+                        Schedule Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Summary -->
+            <div class="dashboard-summary">
+                <div class="summary-card">
+                    <div class="summary-number">47</div>
+                    <div class="summary-label">Reports Generated</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-number">12</div>
+                    <div class="summary-label">Scheduled Reports</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-number">98%</div>
+                    <div class="summary-label">Data Accuracy</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-number">5</div>
+                    <div class="summary-label">Dashboards</div>
+                </div>
+            </div>
+
+            <!-- Report Categories -->
+            <div class="report-categories">
+                <!-- Project Reports -->
+                <div class="report-category">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: var(--professional-blue);">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div>
+                            <div class="category-title">Project Reports</div>
+                            <div class="category-description">Project performance and progress tracking</div>
+                        </div>
+                    </div>
+                    <div class="report-list">
+                        <div class="report-item">
+                            <div class="report-name">Project Status Dashboard</div>
+                            <button class="report-generate" onclick="generateReport('project_status')">Generate</button>
+                        </div>
+                        <div class="report-item">
+                            <div class="report-name">Activity Progress Report</div>
+                            <button class="report-generate" onclick="generateReport('activity_progress')">Generate</button>
+                        </div>
+                        <div class="report-item">
+                            <div class="report-name">Deliverable Status Report</div>
+                            <button class="report-generate" onclick="generateReport('deliverable_status')">Generate</button>
+                        </div>
+                        <div class="report-item">
+                            <div class="report-name">Milestone Achievement Report</div>
+                            <button class="report-generate" onclick="generateReport('milestone_achievement')">Generate</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Reports -->
+                <div class="report-category">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: var(--success-green);">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div>
+                            <div class="category-title">Financial Reports</div>
+                            <div class="category-description">Budget, expenditure, and financial analysis</div>
+                        </div>
+                    </div>
+                    <div class="report-list">
+                        <div class="report-item">
+                            <div class="report-name">Budget vs Actual Report</div>
+                            <button class="report-generate" onclick="generateReport('budget_vs_actual')">Generate</button>
+                        </div>
+                        <div class="report-item">
+                            <div class="report-name">Cash Flow Statement</div>
+                            <button class="report-generate" onclick="generateReport('cash_flow')">Generate</button>
+                        </div>
+                        <div class="report-item">
+                            <div class="report-name">Expenditure Analysis</div>
+                            <button class="report-generate" onclick="generateReport('expenditure_analysis')">Generate</button>
+                        </div>
+                        <div class="report-item">
+                            <div class="report-name">Financial Summary Report</div>
+                            <button class="report-generate" onclick="generateReport('financial_summary')">Generate</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Procurement Reports -->
+                <div class="report-category">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: var(--warning-amber);">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div>
+                            <div class="category-title">Procurement Reports</div>
+                            <div class="category-description">Vendor performance and procurement analytics</div>
+                        </div>
+                    </div>
+                    <div class="report-list">
+                        <div class="report-item">
+                            <div class="report-name">Vendor Performance Report</div>
+                            <button class="report-generate" onclick="generateReport('vendor_performance')">Generate</button>
+                        </div>
+                        <div class="report-item">
+                            <div class="report-name">Procurement Status Report</div>
+                            <button class="report-generate" onclick="generateReport('procurement_status')">Generate</button>
+                        </div>
+                        <div class="report-item">
+                            <div class="report-name">Contract Analysis Report</div>
+                            <button class="report-generate" onclick="generateReport('contract_analysis')">Generate</button>
+                        </div>
+                        <div class="report-item">
+                            <div class="report-name">Tender Analysis Report</div>
+                            <button class="report-generate" onclick="generateReport('tender_analysis')">Generate</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Asset Reports -->
+                <div class="report-category">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: var(--error-red);">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                        <div>
+                            <div class="category-title">Asset Reports</div>
+                            <div class="category-description">Asset utilization and management reports</div>
+                        </div>
+                    </div>
+                    <div class="report-list">
+                        <div class="report-item">
+                            <div class="report-name">Asset Inventory Report</div>
+                            <button class="report-generate" onclick="generateReport('asset_inventory')">Generate</button>
+                        </div>
+                        <div class="report-item">
+                            <div class="report-name">Asset Depreciation Report</div>
+                            <button class="report-generate" onclick="generateReport('asset_depreciation')">Generate</button>
+                        </div>
+                        <div class="report-item">
+                            <div class="report-name">Maintenance Schedule Report</div>
+                            <button class="report-generate" onclick="generateReport('maintenance_schedule')">Generate</button>
+                        </div>
+                        <div class="report-item">
+                            <div class="report-name">Asset Utilization Report</div>
+                            <button class="report-generate" onclick="generateReport('asset_utilization')">Generate</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Report Builder -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Quick Report Builder</h3>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Report Type</label>
+                        <select class="form-control" id="reportType">
+                            <option value="">Select Report Type</option>
+                            <option value="summary">Summary Report</option>
+                            <option value="detailed">Detailed Report</option>
+                            <option value="analytical">Analytical Report</option>
+                            <option value="dashboard">Dashboard View</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Data Source</label>
+                        <select class="form-control" id="dataSource">
+                            <option value="">Select Data Source</option>
+                            <option value="activities">Activities</option>
+                            <option value="deliverables">Deliverables</option>
+                            <option value="finances">Financial Data</option>
+                            <option value="procurements">Procurement Data</option>
+                            <option value="assets">Asset Data</option>
+                            <option value="all">All Data Sources</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Date Range</label>
+                        <select class="form-control" id="dateRange">
+                            <option value="current_month">Current Month</option>
+                            <option value="current_quarter">Current Quarter</option>
+                            <option value="current_year">Current Year</option>
+                            <option value="last_month">Last Month</option>
+                            <option value="last_quarter">Last Quarter</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Format</label>
+                        <select class="form-control" id="reportFormat">
+                            <option value="pdf">PDF</option>
+                            <option value="excel">Excel (XLSX)</option>
+                            <option value="csv">CSV</option>
+                            <option value="html">HTML</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 24px;">
+                    <button class="btn btn-primary btn-lg" onclick="buildCustomReport()">
+                        <i class="fas fa-magic"></i>
+                        Build Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Analytics Dashboard -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Analytics Dashboard</h3>
+                    <select class="form-control" style="width: auto;" id="dashboardView">
+                        <option value="overview">Overview</option>
+                        <option value="financial">Financial</option>
+                        <option value="operational">Operational</option>
+                        <option value="performance">Performance</option>
+                    </select>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <div class="chart-container">
+                        <div style="text-align: center;">
+                            <i class="fas fa-chart-line" style="font-size: 48px; margin-bottom: 16px;"></i>
+                            <p>Project Progress Trend</p>
+                            <p>(Chart.js integration)</p>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div style="text-align: center;">
+                            <i class="fas fa-chart-pie" style="font-size: 48px; margin-bottom: 16px;"></i>
+                            <p>Budget Allocation</p>
+                            <p>(Chart.js integration)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize Reports Module
+        function initializeReports() {
+            showNotification('Reports & Analytics module loaded successfully', 'success');
+        }
+
+        // Navigation
+        function navigateTo(module) {
+            showNotification(`Navigating to ${module}...`, 'info');
+        }
+
+        // Report Generation
+        function generateReport(reportType) {
+            showNotification(`Generating ${reportType.replace('_', ' ')} report...`, 'info');
+            
+            // Simulate report generation
+            setTimeout(() => {
+                showNotification(`${reportType.replace('_', ' ')} report generated successfully!`, 'success');
+                
+                // In a real system, this would trigger download
+                const link = document.createElement('a');
+                link.href = '#';
+                link.download = `${reportType}_report_${new Date().toISOString().split('T')[0]}.pdf`;
+                link.textContent = 'Download Report';
+                
+                setTimeout(() => {
+                    showNotification('Report download would start in a real implementation', 'info');
+                }, 1000);
+            }, 2000);
+        }
+
+        // Custom Report Builder
+        function buildCustomReport() {
+            const reportType = document.getElementById('reportType').value;
+            const dataSource = document.getElementById('dataSource').value;
+            const dateRange = document.getElementById('dateRange').value;
+            const format = document.getElementById('reportFormat').value;
+            
+            if (!reportType || !dataSource) {
+                showNotification('Please select report type and data source', 'error');
+                return;
+            }
+            
+            showNotification(`Building custom ${reportType} report from ${dataSource} data...`, 'info');
+            
+            setTimeout(() => {
+                showNotification(`Custom report built successfully in ${format.toUpperCase()} format!`, 'success');
+            }, 3000);
+        }
+
+        // Report Scheduling
+        function scheduleReport() {
+            showNotification('Report scheduling interface would open here', 'info');
+        }
+
+        // Custom Report Builder Modal
+        function openCustomReportBuilder() {
+            showNotification('Advanced report builder interface would open here', 'info');
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--success-green)' : 
+                            type === 'error' ? 'var(--error-red)' : 
+                            type === 'warning' ? 'var(--warning-amber)' : 'var(--professional-blue)'};
+                color: white;
+                padding: 16px 20px;
+                border-radius: 8px;
+                box-shadow: var(--shadow-hover);
+                z-index: 10000;
+                font-weight: 500;
+                max-width: 300px;
+                animation: slideInRight 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize the reports module
+        document.addEventListener('DOMContentLoaded', initializeReports);
+    </script>
+</body>
+</html>

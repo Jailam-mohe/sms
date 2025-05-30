@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAILS Management System - Activities</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Import base styles from main dashboard */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-charcoal: #1a1a1a;
+            --medium-grey: #2d2d2d;
+            --light-grey: #404040;
+            --background-grey: #f5f5f5;
+            --pure-white: #ffffff;
+            --professional-blue: #0066cc;
+            --success-green: #28a745;
+            --error-red: #dc3545;
+            --warning-amber: #ffc107;
+            --border-color: #e0e0e0;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-hover: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background-grey);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles (same as main dashboard) */
+        .sidebar {
+            width: 280px;
+            background: var(--pure-white);
+            border-right: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .sidebar-nav {
+            padding: 16px 0;
+        }
+
+        .nav-group {
+            margin-bottom: 24px;
+        }
+
+        .nav-group-title {
+            padding: 8px 24px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 12px 24px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #f8f9fa;
+            border-left-color: var(--professional-blue);
+        }
+
+        .nav-item.active {
+            background: #e3f2fd;
+            border-left-color: var(--professional-blue);
+            color: var(--professional-blue);
+        }
+
+        .nav-item i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 24px;
+        }
+
+        /* Header */
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            background: var(--pure-white);
+            padding: 20px 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .header-title h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--pure-white);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--professional-blue);
+            color: white;
+            border-color: var(--professional-blue);
+        }
+
+        .btn-success {
+            background: var(--success-green);
+            color: white;
+            border-color: var(--success-green);
+        }
+
+        .btn-danger {
+            background: var(--error-red);
+            color: white;
+            border-color: var(--error-red);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--pure-white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Activity Filters */
+        .activity-filters {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: var(--pure-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-control {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        .search-input {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 250px;
+        }
+
+        /* Activity Views */
+        .view-toggles {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .view-toggle {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            background: var(--pure-white);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .view-toggle.active {
+            background: var(--professional-blue);
+            color: white;
+            border-color: var(--professional-blue);
+        }
+
+        /* Activity List View */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .activity-item {
+            background: var(--pure-white);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .activity-item:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-1px);
+        }
+
+        .activity-item.priority-high {
+            border-left-color: var(--error-red);
+        }
+
+        .activity-item.priority-medium {
+            border-left-color: var(--warning-amber);
+        }
+
+        .activity-item.priority-low {
+            border-left-color: var(--success-green);
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .activity-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .activity-code {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .activity-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .activity-progress {
+            margin-bottom: 12px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .progress-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .progress-percentage {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .progress {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--professional-blue);
+            transition: width 0.3s ease;
+        }
+
+        .progress-bar.success {
+            background: var(--success-green);
+        }
+
+        .progress-bar.warning {
+            background: var(--warning-amber);
+        }
+
+        .progress-bar.danger {
+            background: var(--error-red);
+        }
+
+        .activity-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        /* Status Badges */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .badge-secondary {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        /* Activity Form Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 5vh;
+        }
+
+        .modal-content {
+            background: var(--pure-white);
+            border-radius: 12px;
+            padding: 24px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: var(--shadow-hover);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 0;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--professional-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .form-control.error {
+            border-color: var(--error-red);
+        }
+
+        .form-error {
+            color: var(--error-red);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Kanban Board */
+        .kanban-board {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .kanban-board.active {
+            display: grid;
+        }
+
+        .kanban-column {
+            background: var(--pure-white);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .kanban-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .kanban-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .kanban-count {
+            background: #f8f9fa;
+            color: var(--text-secondary);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .kanban-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 200px;
+        }
+
+        .kanban-item {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 12px;
+            cursor: move;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .kanban-item:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-1px);
+        }
+
+        .kanban-item.priority-high {
+            border-left-color: var(--error-red);
+        }
+
+        .kanban-item.priority-medium {
+            border-left-color: var(--warning-amber);
+        }
+
+        .kanban-item.priority-low {
+            border-left-color: var(--success-green);
+        }
+
+        .kanban-item-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .kanban-item-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .activity-filters {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kanban-board {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>SAILS</h1>
+                <p>Management System</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-group">
+                    <div class="nav-group-title">Project Management</div>
+                    <a href="#" class="nav-item active">
+                        <i class="fas fa-tasks"></i>
+                        Activities
+                    </a>
+                    <a href="#" class="nav-item" onclick="navigateTo('deliverables')">
+                        <i class="fas fa-check-circle"></i>
+                        Deliverables
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Procurement & Contracts</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('procurements')">
+                        <i class="fas fa-shopping-cart"></i>
+                        Procurements
+                    </a>
+                    <a href="#" class="nav-item" onclick="navigateTo('contracts')">
+                        <i class="fas fa-file-contract"></i>
+                        Contracts
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Resources</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('assets')">
+                        <i class="fas fa-cubes"></i>
+                        Assets
+                    </a>
+                    <a href="#" class="nav-item" onclick="navigateTo('finances')">
+                        <i class="fas fa-dollar-sign"></i>
+                        Finances
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Analytics</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('reports')">
+                        <i class="fas fa-chart-bar"></i>
+                        Reports
+                    </a>
+                </div>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">System</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('settings')">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="main-header">
+                <div class="header-title">
+                    <h2>Activities Management</h2>
+                    <div class="header-subtitle">Plan, track, and manage project activities</div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="openActivityModal()">
+                        <i class="fas fa-plus"></i>
+                        New Activity
+                    </button>
+                    <button class="btn" onclick="exportActivities()">
+                        <i class="fas fa-download"></i>
+                        Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- Activity Filters -->
+            <div class="activity-filters">
+                <div class="filter-group">
+                    <label class="filter-label">Search</label>
+                    <input type="text" class="search-input" placeholder="Search activities..." id="searchInput" oninput="filterActivities()">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <select class="filter-control" id="statusFilter" onchange="filterActivities()">
+                        <option value="">All Statuses</option>
+                        <option value="not_started">Not Started</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="on_hold">On Hold</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Priority</label>
+                    <select class="filter-control" id="priorityFilter" onchange="filterActivities()">
+                        <option value="">All Priorities</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Component</label>
+                    <select class="filter-control" id="componentFilter" onchange="filterActivities()">
+                        <option value="">All Components</option>
+                        <option value="skills_development">Skills Development</option>
+                        <option value="unemployment_insurance">Unemployment Insurance</option>
+                        <option value="social_protection">Social Protection</option>
+                        <option value="project_management">Project Management</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Assignee</label>
+                    <select class="filter-control" id="assigneeFilter" onchange="filterActivities()">
+                        <option value="">All Assignees</option>
+                        <option value="jailam_mohe">Jailam Mohe</option>
+                        <option value="team_lead_1">Team Lead 1</option>
+                        <option value="team_lead_2">Team Lead 2</option>
+                        <option value="consultant_1">Consultant 1</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- View Toggles -->
+            <div class="view-toggles">
+                <button class="view-toggle active" onclick="switchView('list')" id="listViewToggle">
+                    <i class="fas fa-list"></i>
+                    List View
+                </button>
+                <button class="view-toggle" onclick="switchView('kanban')" id="kanbanViewToggle">
+                    <i class="fas fa-columns"></i>
+                    Kanban Board
+                </button>
+                <button class="view-toggle" onclick="switchView('timeline')" id="timelineViewToggle">
+                    <i class="fas fa-calendar-alt"></i>
+                    Timeline
+                </button>
+            </div>
+
+            <!-- Activities List View -->
+            <div class="activity-list" id="activitiesListView">
+                <!-- Activities will be populated here by JavaScript -->
+            </div>
+
+            <!-- Kanban Board View -->
+            <div class="kanban-board" id="kanbanBoardView">
+                <div class="kanban-column">
+                    <div class="kanban-header">
+                        <div class="kanban-title">Not Started</div>
+                        <div class="kanban-count" id="notStartedCount">0</div>
+                    </div>
+                    <div class="kanban-items" id="notStartedItems"></div>
+                </div>
+                <div class="kanban-column">
+                    <div class="kanban-header">
+                        <div class="kanban-title">In Progress</div>
+                        <div class="kanban-count" id="inProgressCount">0</div>
+                    </div>
+                    <div class="kanban-items" id="inProgressItems"></div>
+                </div>
+                <div class="kanban-column">
+                    <div class="kanban-header">
+                        <div class="kanban-title">Review</div>
+                        <div class="kanban-count" id="reviewCount">0</div>
+                    </div>
+                    <div class="kanban-items" id="reviewItems"></div>
+                </div>
+                <div class="kanban-column">
+                    <div class="kanban-header">
+                        <div class="kanban-title">Completed</div>
+                        <div class="kanban-count" id="completedCount">0</div>
+                    </div>
+                    <div class="kanban-items" id="completedItems"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Activity Modal -->
+    <div class="modal" id="activityModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">New Activity</h3>
+                <button class="modal-close" onclick="closeActivityModal()">&times;</button>
+            </div>
+            
+            <form id="activityForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Activity Code</label>
+                        <input type="text" class="form-control" id="activityCode" placeholder="e.g., 1.1.1.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Priority</label>
+                        <select class="form-control" id="activityPriority" required>
+                            <option value="">Select Priority</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Activity Title</label>
+                    <input type="text" class="form-control" id="activityTitle" placeholder="Enter activity title" required>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" id="activityDescription" rows="3" placeholder="Describe the activity objectives and scope"></textarea>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Component</label>
+                        <select class="form-control" id="activityComponent" required>
+                            <option value="">Select Component</option>
+                            <option value="skills_development">Skills Development</option>
+                            <option value="unemployment_insurance">Unemployment Insurance</option>
+                            <option value="social_protection">Social Protection</option>
+                            <option value="project_management">Project Management</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Sub-component</label>
+                        <select class="form-control" id="activitySubcomponent">
+                            <option value="">Select Sub-component</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control" id="activityStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control" id="activityEndDate" required>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Estimated Cost (USD)</label>
+                        <input type="number" class="form-control" id="activityEstimatedCost" placeholder="0.00" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Assigned To</label>
+                        <select class="form-control" id="activityAssignee">
+                            <option value="">Select Assignee</option>
+                            <option value="jailam_mohe">Jailam Mohe</option>
+                            <option value="team_lead_1">Team Lead 1</option>
+                            <option value="team_lead_2">Team Lead 2</option>
+                            <option value="consultant_1">Consultant 1</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Parent Activity (Optional)</label>
+                    <select class="form-control" id="activityParent">
+                        <option value="">No Parent Activity</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn" onclick="closeActivityModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Activity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let activities = [];
+        let currentView = 'list';
+        let currentFilter = {
+            search: '',
+            status: '',
+            priority: '',
+            component: '',
+            assignee: ''
+        };
+        let editingActivity = null;
+
+        // In-Memory Storage (localStorage not available in sandboxed environment)
+        const inMemoryStorage = {};
+
+        // Sample Activities Data
+        const sampleActivities = [
+            {
+                id: 'act_001',
+                code: '1.1.1.1',
+                title: 'Conduct Skills Gap Analysis',
+                description: 'Comprehensive analysis of current skills gaps in the Maldivian labor market',
+                component: 'skills_development',
+                subcomponent: 'analysis',
+                status: 'in_progress',
+                priority: 'high',
+                progress: 65,
+                startDate: '2025-01-15',
+                endDate: '2025-06-30',
+                estimatedCost: 45000,
+                actualCost: 29250,
+                assignedTo: 'jailam_mohe',
+                assigneeName: 'Jailam Mohe',
+                parentActivity: null,
+                createdAt: '2025-01-10',
+                updatedAt: '2025-05-28'
+            },
+            {
+                id: 'act_002',
+                code: '1.1.2.1',
+                title: 'Design Training Curriculum',
+                description: 'Develop comprehensive training curriculum for identified skill areas',
+                component: 'skills_development',
+                subcomponent: 'curriculum',
+                status: 'not_started',
+                priority: 'medium',
+                progress: 0,
+                startDate: '2025-07-01',
+                endDate: '2025-09-30',
+                estimatedCost: 35000,
+                actualCost: 0,
+                assignedTo: 'team_lead_1',
+                assigneeName: 'Team Lead 1',
+                parentActivity: 'act_001',
+                createdAt: '2025-01-10',
+                updatedAt: '2025-01-10'
+            },
+            {
+                id: 'act_003',
+                code: '2.1.1.1',
+                title: 'Develop UI System Framework',
+                description: 'Create comprehensive framework for unemployment insurance system',
+                component: 'unemployment_insurance',
+                subcomponent: 'framework',
+                status: 'completed',
+                priority: 'critical',
+                progress: 100,
+                startDate: '2025-02-01',
+                endDate: '2025-05-15',
+                estimatedCost: 85000,
+                actualCost: 82500,
+                assignedTo: 'consultant_1',
+                assigneeName: 'Consultant 1',
+                parentActivity: null,
+                createdAt: '2025-01-15',
+                updatedAt: '2025-05-15'
+            },
+            {
+                id: 'act_004',
+                code: '2.1.2.1',
+                title: 'UI System Testing',
+                description: 'Comprehensive testing of unemployment insurance system',
+                component: 'unemployment_insurance',
+                subcomponent: 'testing',
+                status: 'in_progress',
+                priority: 'high',
+                progress: 45,
+                startDate: '2025-05-16',
+                endDate: '2025-07-31',
+                estimatedCost: 25000,
+                actualCost: 11250,
+                assignedTo: 'team_lead_2',
+                assigneeName: 'Team Lead 2',
+                parentActivity: 'act_003',
+                createdAt: '2025-05-10',
+                updatedAt: '2025-05-29'
+            },
+            {
+                id: 'act_005',
+                code: '3.1.1.1',
+                title: 'Social Protection Policy Review',
+                description: 'Review and update existing social protection policies',
+                component: 'social_protection',
+                subcomponent: 'policy',
+                status: 'on_hold',
+                priority: 'medium',
+                progress: 20,
+                startDate: '2025-03-01',
+                endDate: '2025-08-31',
+                estimatedCost: 40000,
+                actualCost: 8000,
+                assignedTo: 'jailam_mohe',
+                assigneeName: 'Jailam Mohe',
+                parentActivity: null,
+                createdAt: '2025-02-20',
+                updatedAt: '2025-04-15'
+            }
+        ];
+
+        // Initialize application
+        function initializeApp() {
+            // Load activities from memory storage or use sample data
+            const storedActivities = inMemoryStorage['sails_activities'];
+            activities = storedActivities ? JSON.parse(storedActivities) : sampleActivities;
+            
+            // Render activities
+            renderActivities();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Show welcome message
+            setTimeout(() => {
+                showNotification('Activities module loaded successfully', 'success');
+            }, 500);
+        }
+
+        // Render activities based on current view
+        function renderActivities() {
+            const filteredActivities = filterActivitiesData();
+            
+            if (currentView === 'list') {
+                renderListView(filteredActivities);
+            } else if (currentView === 'kanban') {
+                renderKanbanView(filteredActivities);
+            }
+        }
+
+        // Filter activities based on current filters
+        function filterActivitiesData() {
+            return activities.filter(activity => {
+                const matchesSearch = !currentFilter.search || 
+                    activity.title.toLowerCase().includes(currentFilter.search.toLowerCase()) ||
+                    activity.description.toLowerCase().includes(currentFilter.search.toLowerCase()) ||
+                    activity.code.toLowerCase().includes(currentFilter.search.toLowerCase());
+                
+                const matchesStatus = !currentFilter.status || activity.status === currentFilter.status;
+                const matchesPriority = !currentFilter.priority || activity.priority === currentFilter.priority;
+                const matchesComponent = !currentFilter.component || activity.component === currentFilter.component;
+                const matchesAssignee = !currentFilter.assignee || activity.assignedTo === currentFilter.assignee;
+                
+                return matchesSearch && matchesStatus && matchesPriority && matchesComponent && matchesAssignee;
+            });
+        }
+
+        // Render list view
+        function renderListView(filteredActivities) {
+            const container = document.getElementById('activitiesListView');
+            container.innerHTML = '';
+            
+            if (filteredActivities.length === 0) {
+                container.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 40px;">
+                        <i class="fas fa-search" style="font-size: 48px; color: var(--text-secondary); margin-bottom: 16px;"></i>
+                        <h3 style="margin-bottom: 8px;">No activities found</h3>
+                        <p style="color: var(--text-secondary);">Try adjusting your search criteria or create a new activity.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredActivities.forEach(activity => {
+                const activityElement = createActivityElement(activity);
+                container.appendChild(activityElement);
+            });
+        }
+
+        // Create activity element for list view
+        function createActivityElement(activity) {
+            const element = document.createElement('div');
+            element.className = `activity-item priority-${activity.priority}`;
+            element.innerHTML = `
+                <div class="activity-header">
+                    <div>
+                        <div class="activity-title">${activity.title}</div>
+                        <div class="activity-code">${activity.code}</div>
+                    </div>
+                    <div class="activity-actions">
+                        <button class="btn btn-sm" onclick="editActivity('${activity.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteActivity('${activity.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="activity-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <span class="badge badge-${getStatusBadgeClass(activity.status)}">${formatStatus(activity.status)}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-flag"></i>
+                        <span class="badge badge-${getPriorityBadgeClass(activity.priority)}">${formatPriority(activity.priority)}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>${activity.assigneeName || 'Unassigned'}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>${formatDate(activity.startDate)} - ${formatDate(activity.endDate)}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span>${activity.estimatedCost.toLocaleString()}</span>
+                    </div>
+                </div>
+                
+                <div class="activity-progress">
+                    <div class="progress-header">
+                        <span class="progress-label">Progress</span>
+                        <span class="progress-percentage">${activity.progress}%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar ${getProgressBarClass(activity.progress)}" style="width: ${activity.progress}%"></div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 8px; color: var(--text-secondary); font-size: 14px;">
+                    ${activity.description}
+                </div>
+            `;
+            
+            return element;
+        }
+
+        // Render kanban view
+        function renderKanbanView(filteredActivities) {
+            const statusColumns = {
+                not_started: document.getElementById('notStartedItems'),
+                in_progress: document.getElementById('inProgressItems'),
+                review: document.getElementById('reviewItems'),
+                completed: document.getElementById('completedItems')
+            };
+            
+            const statusCounts = {
+                not_started: 0,
+                in_progress: 0,
+                review: 0,
+                completed: 0
+            };
+            
+            // Clear all columns
+            Object.values(statusColumns).forEach(column => {
+                column.innerHTML = '';
+            });
+            
+            // Add activities to appropriate columns
+            filteredActivities.forEach(activity => {
+                const status = activity.status === 'on_hold' ? 'review' : activity.status;
+                if (statusColumns[status]) {
+                    const kanbanItem = createKanbanItem(activity);
+                    statusColumns[status].appendChild(kanbanItem);
+                    statusCounts[status]++;
+                }
+            });
+            
+            // Update counts
+            document.getElementById('notStartedCount').textContent = statusCounts.not_started;
+            document.getElementById('inProgressCount').textContent = statusCounts.in_progress;
+            document.getElementById('reviewCount').textContent = statusCounts.review;
+            document.getElementById('completedCount').textContent = statusCounts.completed;
+        }
+
+        // Create kanban item
+        function createKanbanItem(activity) {
+            const element = document.createElement('div');
+            element.className = `kanban-item priority-${activity.priority}`;
+            element.draggable = true;
+            element.dataset.activityId = activity.id;
+            element.innerHTML = `
+                <div class="kanban-item-title">${activity.title}</div>
+                <div class="kanban-item-meta">
+                    <div style="margin-bottom: 4px;">
+                        <span class="badge badge-${getPriorityBadgeClass(activity.priority)}">${formatPriority(activity.priority)}</span>
+                    </div>
+                    <div style="font-size: 11px;">
+                        ${activity.code} • ${activity.assigneeName || 'Unassigned'}
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar" style="width: ${activity.progress}%"></div>
+                        </div>
+                        <div style="font-size: 11px; margin-top: 2px;">${activity.progress}% complete</div>
+                    </div>
+                </div>
+            `;
+            
+            // Add click event to open activity details
+            element.addEventListener('click', () => editActivity(activity.id));
+            
+            return element;
+        }
+
+        // Navigation and view switching
+        function navigateTo(module) {
+            showNotification(`Navigating to ${module}...`, 'info');
+            // In a full implementation, this would navigate to the appropriate module
+        }
+
+        function switchView(view) {
+            currentView = view;
+            
+            // Update view toggles
+            document.querySelectorAll('.view-toggle').forEach(toggle => {
+                toggle.classList.remove('active');
+            });
+            document.getElementById(`${view}ViewToggle`).classList.add('active');
+            
+            // Show/hide appropriate views
+            document.getElementById('activitiesListView').style.display = view === 'list' ? 'flex' : 'none';
+            document.getElementById('kanbanBoardView').style.display = view === 'kanban' ? 'grid' : 'none';
+            
+            // Re-render activities
+            renderActivities();
+            
+            showNotification(`Switched to ${view} view`, 'success');
+        }
+
+        // Modal functions
+        function openActivityModal(activityId = null) {
+            editingActivity = activityId;
+            const modal = document.getElementById('activityModal');
+            const form = document.getElementById('activityForm');
+            
+            if (activityId) {
+                // Edit mode
+                const activity = activities.find(a => a.id === activityId);
+                if (activity) {
+                    document.getElementById('modalTitle').textContent = 'Edit Activity';
+                    populateActivityForm(activity);
+                }
+            } else {
+                // New mode
+                document.getElementById('modalTitle').textContent = 'New Activity';
+                form.reset();
+                generateActivityCode();
+            }
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeActivityModal() {
+            const modal = document.getElementById('activityModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            editingActivity = null;
+        }
+
+        function populateActivityForm(activity) {
+            document.getElementById('activityCode').value = activity.code;
+            document.getElementById('activityTitle').value = activity.title;
+            document.getElementById('activityDescription').value = activity.description;
+            document.getElementById('activityComponent').value = activity.component;
+            document.getElementById('activityPriority').value = activity.priority;
+            document.getElementById('activityStartDate').value = activity.startDate;
+            document.getElementById('activityEndDate').value = activity.endDate;
+            document.getElementById('activityEstimatedCost').value = activity.estimatedCost;
+            document.getElementById('activityAssignee').value = activity.assignedTo;
+        }
+
+        function generateActivityCode() {
+            // Simple auto-generation logic
+            const maxCode = activities.reduce((max, activity) => {
+                const codeNum = parseInt(activity.code.replace(/\./g, ''));
+                return Math.max(max, codeNum);
+            }, 0);
+            
+            const newCodeNum = maxCode + 1;
+            const newCode = newCodeNum.toString().padStart(4, '0').replace(/(\d)(\d)(\d)(\d)/, '$1.$2.$3.$4');
+            document.getElementById('activityCode').value = newCode;
+        }
+
+        // Activity CRUD operations
+        function editActivity(activityId) {
+            openActivityModal(activityId);
+        }
+
+        function deleteActivity(activityId) {
+            if (confirm('Are you sure you want to delete this activity?')) {
+                activities = activities.filter(a => a.id !== activityId);
+                saveActivities();
+                renderActivities();
+                showNotification('Activity deleted successfully', 'success');
+            }
+        }
+
+        function saveActivity(activityData) {
+            if (editingActivity) {
+                // Update existing activity
+                const index = activities.findIndex(a => a.id === editingActivity);
+                if (index !== -1) {
+                    activities[index] = { ...activities[index], ...activityData, updatedAt: new Date().toISOString() };
+                    showNotification('Activity updated successfully', 'success');
+                }
+            } else {
+                // Create new activity
+                const newActivity = {
+                    id: 'act_' + Date.now(),
+                    ...activityData,
+                    progress: 0,
+                    actualCost: 0,
+                    status: 'not_started',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                activities.push(newActivity);
+                showNotification('Activity created successfully', 'success');
+            }
+            
+            saveActivities();
+            renderActivities();
+            closeActivityModal();
+        }
+
+        function saveActivities() {
+            inMemoryStorage['sails_activities'] = JSON.stringify(activities);
+        }
+
+        // Form handling
+        function setupEventListeners() {
+            const form = document.getElementById('activityForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const activityData = {
+                    code: document.getElementById('activityCode').value,
+                    title: document.getElementById('activityTitle').value,
+                    description: document.getElementById('activityDescription').value,
+                    component: document.getElementById('activityComponent').value,
+                    subcomponent: document.getElementById('activitySubcomponent').value,
+                    priority: document.getElementById('activityPriority').value,
+                    startDate: document.getElementById('activityStartDate').value,
+                    endDate: document.getElementById('activityEndDate').value,
+                    estimatedCost: parseFloat(document.getElementById('activityEstimatedCost').value) || 0,
+                    assignedTo: document.getElementById('activityAssignee').value,
+                    assigneeName: getAssigneeName(document.getElementById('activityAssignee').value),
+                    parentActivity: document.getElementById('activityParent').value || null
+                };
+                
+                if (validateActivityForm(activityData)) {
+                    saveActivity(activityData);
+                }
+            });
+            
+            // Close modal when clicking outside
+            document.getElementById('activityModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeActivityModal();
+                }
+            });
+        }
+
+        function validateActivityForm(data) {
+            let isValid = true;
+            const errors = [];
+            
+            if (!data.code) {
+                errors.push('Activity code is required');
+                isValid = false;
+            }
+            
+            if (!data.title) {
+                errors.push('Activity title is required');
+                isValid = false;
+            }
+            
+            if (!data.component) {
+                errors.push('Component is required');
+                isValid = false;
+            }
+            
+            if (!data.priority) {
+                errors.push('Priority is required');
+                isValid = false;
+            }
+            
+            if (!data.startDate) {
+                errors.push('Start date is required');
+                isValid = false;
+            }
+            
+            if (!data.endDate) {
+                errors.push('End date is required');
+                isValid = false;
+            }
+            
+            if (data.startDate && data.endDate && new Date(data.startDate) >= new Date(data.endDate)) {
+                errors.push('End date must be after start date');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                showNotification('Please fix the following errors: ' + errors.join(', '), 'error');
+            }
+            
+            return isValid;
+        }
+
+        // Filter functions
+        function filterActivities() {
+            currentFilter = {
+                search: document.getElementById('searchInput').value,
+                status: document.getElementById('statusFilter').value,
+                priority: document.getElementById('priorityFilter').value,
+                component: document.getElementById('componentFilter').value,
+                assignee: document.getElementById('assigneeFilter').value
+            };
+            
+            renderActivities();
+        }
+
+        // Export function
+        function exportActivities() {
+            const dataStr = JSON.stringify(activities, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'sails_activities_export.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Activities exported successfully', 'success');
+        }
+
+        // Utility functions
+        function getStatusBadgeClass(status) {
+            const statusMap = {
+                'not_started': 'secondary',
+                'in_progress': 'info',
+                'completed': 'success',
+                'on_hold': 'warning',
+                'cancelled': 'danger'
+            };
+            return statusMap[status] || 'secondary';
+        }
+
+        function getPriorityBadgeClass(priority) {
+            const priorityMap = {
+                'low': 'success',
+                'medium': 'info',
+                'high': 'warning',
+                'critical': 'danger'
+            };
+            return priorityMap[priority] || 'secondary';
+        }
+
+        function getProgressBarClass(progress) {
+            if (progress >= 100) return 'success';
+            if (progress >= 75) return '';
+            if (progress >= 50) return 'warning';
+            return 'danger';
+        }
+
+        function formatStatus(status) {
+            return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function formatPriority(priority) {
+            return priority.charAt(0).toUpperCase() + priority.slice(1);
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function getAssigneeName(assigneeId) {
+            const assigneeMap = {
+                'jailam_mohe': 'Jailam Mohe',
+                'team_lead_1': 'Team Lead 1',
+                'team_lead_2': 'Team Lead 2',
+                'consultant_1': 'Consultant 1'
+            };
+            return assigneeMap[assigneeId] || 'Unassigned';
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--success-green)' : 
+                            type === 'error' ? 'var(--error-red)' : 
+                            type === 'warning' ? 'var(--warning-amber)' : 'var(--professional-blue)'};
+                color: white;
+                padding: 16px 20px;
+                border-radius: 8px;
+                box-shadow: var(--shadow-hover);
+                z-index: 10000;
+                font-weight: 500;
+                max-width: 300px;
+                animation: slideInRight 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>-group">
+                    <div class="nav-group-title">Main</div>
+                    <a href="#" class="nav-item" onclick="navigateTo('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                </div>
+                
+                <div class="nav
