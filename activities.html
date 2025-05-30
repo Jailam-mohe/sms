@@ -1290,9 +1290,23 @@
 
         // Navigation and view switching
         function navigateTo(module) {
-            showNotification(`Navigating to ${module}...`, 'info');
-            // In a full implementation, this would navigate to the appropriate module
-        }
+    // Instead of showing notification, actually navigate
+    const moduleUrls = {
+        'dashboard': 'index.html',
+        'activities': 'activities.html',
+        'procurements': 'procurements.html',
+        'contracts': 'contracts.html',
+        'finances': 'finances.html',
+        'deliverables': 'deliverables.html',
+        'assets': 'assets.html',
+        'settings': 'settings.html',
+        'reports': 'reports.html'
+    };
+    
+    if (moduleUrls[module]) {
+        window.location.href = moduleUrls[module];
+    }
+}
 
         function switchView(view) {
             currentView = view;
