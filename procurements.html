@@ -1643,8 +1643,23 @@
 
         // Navigation
         function navigateTo(module) {
-            showNotification(`Navigating to ${module}...`, 'info');
-        }
+    // Instead of showing notification, actually navigate
+    const moduleUrls = {
+        'dashboard': 'index.html',
+        'activities': 'activities.html',
+        'procurements': 'procurements.html',
+        'contracts': 'contracts.html',
+        'finances': 'finances.html',
+        'deliverables': 'deliverables.html',
+        'assets': 'assets.html',
+        'settings': 'settings.html',
+        'reports': 'reports.html'
+    };
+    
+    if (moduleUrls[module]) {
+        window.location.href = moduleUrls[module];
+    }
+}
 
         // Placeholder functions for future implementation
         function viewTender(tenderId) {
